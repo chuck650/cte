@@ -1,25 +1,63 @@
 
-#Notes
+# Cyber Training Environment (CTE)
 
-#Examples
+Ansible playbooks and supporting plugins for building a home lab for PSCC cyber defense students.
 
-## Override with local configuration
-Source ansible.env which sets ANSIBLE_CONFIG=./ansible.cfg
+---
+# Installation
 
-. ansible.env
+Create a  directory to install the CTE ansible environment.
+
+``` bash
+~$ mkdir ~/ansible
+~$ cd ~/ansible
+~/ansible$ git clone https://github.com/chuck650/cte.git
+```
+
+## Initialize and setup the CTE using the CTE initialization playbook
+
+``` bash
+~$ cd ~/ansible/cte
+~/ansible/cte$ ansible
+```
+
+## Conduct a basic system inventory
+
+Run the ansible setup module against the localhost and tee the output into a file for future reference.
+
+``` bash
+$ ansible -i localhost -m setup | tee ~/config-${USER}.txt
+```
+---
+# Examples of Usage
+
+## Override default ansible configuration
+
+The CTE provides a sample Ansible environment variable configuration that can be sourced into the current user environment to set Ansible environment variables.
+
+``` bash
+~/ansible/cte$ . ansible.env
+```
 
 ## Show ansible running configuration
-ansible-config dump
+``` bash
+$ ansible-config dump
+```
 
 ## Ping the localhost implicit inventory item
-ansible -m ping localhost
+``` bash
+$ ansible -m ping localhost
+```
 
-## Run a playbook using ansible default config files
-ansible-playbook  disable-network-manager
+## Run a playbook
+``` bash
+~/ansible/cte$ ansible-playbook  disable-network-manager
+```
 
+---
+# CTE Example Directory Structure
 
-#Directory Structure
-
+```
 production                # inventory file for production servers
 staging                   # inventory file for staging environment
 
@@ -62,3 +100,4 @@ roles/
     webtier/              # same kind of structure as "common" was above, done for the webtier role
     monitoring/           # ""
     fooapp/               # ""
+```
