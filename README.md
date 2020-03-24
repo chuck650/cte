@@ -8,7 +8,7 @@ Ansible playbooks and supporting plugins for building a home lab for PSCC cyber 
 
 Create a  directory to install the CTE ansible environment.
 
-``` bash
+```bash
 ~$ mkdir ~/ansible
 ~$ cd ~/ansible
 ~/ansible$ git clone https://github.com/chuck650/cte.git
@@ -16,16 +16,21 @@ Create a  directory to install the CTE ansible environment.
 
 ## Initialize and setup the CTE using the CTE initialization playbook
 
-``` bash
+```bash
 ~$ cd ~/ansible/cte
 ~/ansible/cte$ ansible
 ```
+<pre>
+<code class="language-bash">
+<span style="user-select:none;">~/test$</span> cmd
+</code>
+</pre>
 
 ## Conduct a basic system inventory
 
 Run the ansible setup module against the localhost and tee the output into a file for future reference.
 
-``` bash
+```bash
 $ ansible -i localhost -m setup | tee ~/config-${USER}.txt
 ```
 ---
@@ -35,22 +40,22 @@ $ ansible -i localhost -m setup | tee ~/config-${USER}.txt
 
 The CTE provides a sample Ansible environment variable configuration that can be sourced into the current user environment to set Ansible environment variables.
 
-``` bash
+```bash
 ~/ansible/cte$ . ansible.env
 ```
 
 ## Show ansible running configuration
-``` bash
+```bash
 $ ansible-config dump
 ```
 
 ## Ping the localhost implicit inventory item
-``` bash
+```bash
 $ ansible -m ping localhost
 ```
 
 ## Run a playbook
-``` bash
+```bash
 ~/ansible/cte$ ansible-playbook  disable-network-manager
 ```
 
