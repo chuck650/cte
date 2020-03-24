@@ -1,0 +1,20 @@
+#cloud-config
+{% set user_gecos = ansible_user_gecos.split(',') %}
+{% set rsa_public_key = lookup('file', rsa_key_path + '.pub')  %}
+{% set ecdsa_public_key = lookup('file', ecdsa_key_path + '.pub')  %}
+users:
+  - name: {{ ansible_user_id }}
+    gecos: {{ user_gecos[0] }}
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    lock-passwd: false
+    ssh_import_id: {{ ansible_user_id }}
+    ssh-authorized-keys:
+      - {{ rsa_public_key }}
+      - {{ ecdsa_public_key }}
+packages:
+{% for package in vm_packages %}
+  - {{ package }}
+{% endfor %}
+byobu_by_default: disable

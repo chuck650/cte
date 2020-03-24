@@ -1,0 +1,24 @@
+---
+
+- name: Configure netplan file 01-netcfg.yaml
+  template:
+    src: 01-netcfg.yaml.j2
+    dest: /etc/netplan/01-netcfg.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: yes
+
+
+- name: Generate netplan config
+  shell: netplan generate
+  become: yes
+  changed_when: false
+  check_mode: false
+
+
+- name: Apply netplan config
+  shell: netplan apply
+  become: yes
+  changed_when: false
+  check_mode: false

@@ -1,0 +1,9 @@
+---
+
+#- name: Include Gather network facts tasks
+#  include_tasks: gather_network_facts.yaml
+
+- name: Display all variables/facts known for a host
+  debug:
+    var: hostvars[localhost]
+    verbosity: 4

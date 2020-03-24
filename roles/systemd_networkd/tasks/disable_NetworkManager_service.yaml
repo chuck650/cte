@@ -1,0 +1,14 @@
+---
+- name: Disable NetworkManager.service
+  systemd:
+    state: stopped
+    masked: yes
+    enabled: no
+    name: NetworkManager.service
+  become: yes
+
+- name: Remove netplan NetworkManager config files
+  file:
+    path: /etc/netplan/01-network-manager-all.yaml
+    state: absent
+  become: yes

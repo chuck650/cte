@@ -1,0 +1,22 @@
+---
+# Disable NetworkManager
+- name: Include disable NetworkManager tasks
+  include_tasks: disable_NetworkManager_service.yaml
+
+# Disable NetowrkManager notifications using dconf
+# dconf set org/gnome/nm-applet/disable-connected-notifications true
+
+# Hide the nm-applet panes from system settings
+#sudo mv /etc/xdg/autostart/nm-applet.desktop /etc/xdg/autostart/nm-applet.desktop.disabled
+#ls -l /etc/xdg/autostart/*.disabled
+#-rw-r--r-- 1 root root 238 Oct  7 04:00 /etc/xdg/autostart/gnome-welcome-tour.desktop.disabled
+#-rw-r--r-- 1 root root 350 Mar  4  2019 /etc/xdg/autostart/nm-applet.desktop.disabled
+# https://www.configserverfirewall.com/ubuntu-linux/ubuntu-network-manager/
+
+# Start and enable systemd-networkd.service
+- name: Include enable systemd-networkd.service tasks
+  include_tasks: enable_networkd.yaml
+
+# Update and apply netplan config file to use networkd renderer
+- name: Include configure netplan tasks
+  include_tasks: configure_netplan.yaml

@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  connection: local
+  roles:
+   - disable_cloud_init
+   - systemd_networkd
+   - ovs_vlan_bridge

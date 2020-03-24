@@ -1,0 +1,34 @@
+---
+
+- name: Flush ip addresses from vlan port interface
+  shell: ip addr flush dev {{ ansible_enp2s0.device }}
+  when:
+    - ansible_enp2s0 is defined
+    - ansible_enp2s0.ipv4 is defined
+  become: yes
+
+- name: Get ovs-vlan ports
+  shell: ovs-vsctl list-ports ovs-vlan
+  register: ovs_vlan_ports
+  when: "'ovs-vlan' in openvswitch_bridges.stdout_lines"
+  become: yes
+  changed_when: false
+  check_mode: false
+
+- name: Show ovs-vlan ports
+  debug:
+    msg: "{{ item }}"
+    verbosity: 1
+  loop: "{{ ovs_vlan_ports.stdout_lines }}"
+
+- name: Add iface enps20 to ovs-vlan bridges
+  shell: ovs-vsctl add-port ovs-vlan enp2s0
+  when: "'enp2s0' not in ovs_vlan_ports.stdout_lines"
+  become: yes
+
+#- name: DHCP for ovs-vlan configuration
+#  shell: dhclient {{ ansible_ovs_vlan.device }}
+#  when:
+#    - ansible_ovs_vlan is defined
+#    - ansible_ovs_vlan.ipv4 is not defined
+#  become: yes

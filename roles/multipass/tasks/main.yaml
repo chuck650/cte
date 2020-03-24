@@ -1,0 +1,17 @@
+---
+- name: Install openvswitch packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - snapd
+    - openssh-client
+  become: yes
+
+- name: Install multipass snap
+  snap:
+    name: multipass
+    state: present
+    classic: yes
+  become: yes
+

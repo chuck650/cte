@@ -1,0 +1,26 @@
+#cloud-config
+users:
+  - name: chuck
+    gecos: Chuck Nelson
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    lock-passwd: false
+    ssh_import_id: chuck
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDd6C5cWXl8ZrA/G6eKGK68xt69UadVdkssVHcKg5tQaTMEl4jWqjiPT93ou9ey43/+YntdEPKY/EROoI8146kwXC+ORJeoN6ylnd9uE5prIzgiUW7X0w6/AcDfjRmKoQ1cXxV+/OaQ1DIaIEDQZ8ojB15Ho0XWWyEMY4DC79gwWPvKsrvnRPEN/tZ2+gtpl3amJ596YjlRM7Vwa+xkLhXbPbCdph79kcUtC58m5gdwsCByPNS78TH2tSojE5UCHREVqPQDdut50mtNXzrvk5/ymgCXCyZo6eWhpRs26z2K0LZypmgUtFHCAgg3wjyrGu46U3eKMxQe8+Wou+axyNtx chuck@sasquatch.nelson.fam
+      - ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBD8bh/CS3GDQLgUPs1jZwSGCHdEADKxZoECL2sh5ied5QpnigiMCrtFefA4dfrH5/u8wZqHDpuGFzN5BzsPAH74= chuck@st01
+packages:
+  - npm
+  - nodejs
+  - tmux
+  - vim
+  - nginx-core
+  - php
+  - php-fpm
+  - php-mysql
+  - php-markdown
+  - php-amqp
+  - mysql-server
+  - rabbitmq-server
+byobu_by_default: disable

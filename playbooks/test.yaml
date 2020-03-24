@@ -1,0 +1,68 @@
+---
+- hosts: localhost
+  connection: local
+#  tasks:
+#    - name: Get network gather network facts
+#      setup:
+#        gather_subset:
+#          - '!all'
+#          - network
+
+#    - name: Display all network interface names
+#      debug:
+#        var: ansible_facts.interfaces
+#        verbosity: 1
+
+#    - name: IPv4 configuration
+#      debug:
+#        var: ansible_default_ipv4
+#
+#    - name: Get physical wired predictable interfaces names
+#      command: find /sys/class/net -maxdepth 1 -type l -not -lname '*virtual*' -path /sys/class/net/en* -printf '%f\n'
+#      register: eth_ifaces
+#      changed_when: false
+#      check_mode: false
+#
+#    - name: define wired aliases
+#      set_fact:
+#        ansible_eth: "{% set ansible_eth = ansible_eth|default([]) + [vars['ansible_' + item]] %}{{ ansible_eth|list }}"
+#      with_items:
+#        - "{{ eth_ifaces.stdout_lines }}"
+
+#    - name: Show wired aliases
+#      debug:
+#        msg: "{{ item.device }}"
+#        verbosity: 1
+#      with_items: "{{ ansible_eth }}"
+#
+#    - name: Get physical wireless predictable interfaces names
+#      command: find /sys/class/net -maxdepth 1 -type l -not -lname '*virtual*' -path /sys/class/net/wl* -printf '%f\n'
+#      register: wlan_ifaces
+#      changed_when: false
+#      check_mode: false
+#
+#    - name: define wireless aliases
+#      set_fact:
+#        ansible_wlan: "{% set ansible_wlan = ansible_wlan|default([]) + [vars['ansible_' + item]] %}{{ ansible_wlan|list }}"
+#      with_items:
+#        - "{{ wlan_ifaces.stdout_lines }}"
+#
+#    - name: Show wireless aliases
+#      debug:
+#        msg: "{{ item.device }}"
+#        verbosity: 1
+#      with_items: "{{ ansible_wlan }}"
+
+#    - name: Default IPv4 interface
+#      debug:
+#        msg:
+#          - "default interface: {{ ansible_default_ipv4.interface }}"
+#          - "active: {{ vars['ansible_' + ansible_default_ipv4.interface].active }}"
+#          - "MAC addr: {{ vars['ansible_' + ansible_default_ipv4.interface].macaddress }}"
+#          - "IPv4: {{ vars['ansible_' + ansible_default_ipv4.interface].ipv4 }}"
+
+  roles:
+   - tpd_multipass
+
+#  vars:
+#    ovs_vlan: ovs-vlan

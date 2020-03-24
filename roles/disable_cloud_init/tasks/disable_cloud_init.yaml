@@ -1,0 +1,12 @@
+---
+
+- name: Check if /etc/cloud exists
+  stat:
+    path: /etc/disable_cloud
+  register: cloud_config
+
+- name: disable cloud-init
+  copy:
+    src: 99-disable-network-config.cfg
+    dest: /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg
+  when: cloud_config.stat.exists

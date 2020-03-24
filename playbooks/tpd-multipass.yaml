@@ -1,0 +1,8 @@
+---
+- hosts: tpd-chuck
+  tasks:
+    - name: Get network gather network facts
+      setup:
+        gather_subset:
+          - '!all'
+          - network

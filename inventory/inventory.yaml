@@ -1,0 +1,11 @@
+all:
+  hosts:
+    10.223.79.156:
+      ansible_ssh_host: 10.223.79.156
+    localhost:
+      ansible_host: 127.0.0.1
+  children:
+    webservers:
+      hosts: {}
+    dbservers:
+      hosts: {}

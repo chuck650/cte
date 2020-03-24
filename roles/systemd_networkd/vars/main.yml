@@ -1,0 +1,5 @@
+---
+ovs_vlan_bridge: ovs-vlan
+default_iface: ansible_eno1
+vlan_port_iface: ansible_enp2s0
+wireless_iface: wlx0013eff200bd

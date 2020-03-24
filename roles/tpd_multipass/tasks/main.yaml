@@ -1,0 +1,71 @@
+---
+# Create a ~/.ssh directory for user if it does not exist
+- name: Create/verify .ssh directory
+  file:
+    path: "{{ ansible_user_dir }}/.ssh"
+    state: directory
+    mode: 0700
+
+# Create a ~/.ssh/id_rsa ssh keyfile for user if it does not exist
+- name: Create/verify rsa ssh key
+  shell:
+    cmd: ssh-keygen -t rsa -N "" -f {{ rsa_key_path }}
+    creates: "{{ rsa_key_path }}"
+
+# Create a ~/.ssh/id_ecdsa ssh keyfile for user if it does not exist
+- name: Create/verify ecdsa ssh key
+  shell:
+    cmd: ssh-keygen -t ecdsa -N "" -f {{ ecdsa_key_path }}
+    creates: "{{ ecdsa_key_path }}"
+
+# Create a ~/.multipass directory for user if it does not exist
+- name: Create/verify .multpass directory
+  file:
+    path: "{{ ansible_user_dir }}/.multipass"
+    state: directory
+    mode: 0750
+
+# Generate cloud-init file for vm initialization
+- name: Generate cloud-init file
+  template:
+    src: user-data.yaml.j2
+    dest: "{{ ansible_user_dir }}/.multipass/tpd-cloud-init.yaml"
+
+# Install a multipass vm named {{ vm_name }}
+- name: Launch {{ vm_name }} virtual machine
+  command:
+    argv:
+      - multipass
+      - launch
+      - --cloud-init
+      - "{{ ansible_user_dir }}/.multipass/tpd-cloud-init.yaml"
+      - --name
+      - "{{ vm_name }}"
+      - "{{ vm_os_version }}"
+    creates: /var/snap/multipass/common/data/multipassd/vault/instances/{{ vm_name }}
+  become: yes
+
+# Start/verify multipass vm named {{ vm_name }}
+- name: Start/verify {{ vm_name }} virtual machine
+  command:
+    argv:
+      - multipass
+      - start
+      - "{{ vm_name }}"
+  changed_when: false
+  become: yes
+
+# Get vm ip address
+- name: Get vm ip address from multipass
+  shell: multipass list | awk '$1 == "{{ vm_name }}" {print $3;exit;}'
+  register: vm_ip
+  changed_when: false
+  check_mode: false
+  become: yes
+#- set_fact: vm_ip={{ vm_ip.stdout }}
+
+# Check if the ip address found is avalid format 
+- name: Test if valid ip address
+  fail:
+    msg: "Could not detect an ip address on {{ vm_name }}"
+  when: vm_ip.stdout|ipv4 is not defined

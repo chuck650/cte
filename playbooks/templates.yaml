@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+
+  - name: Include test vars
+    include_vars:
+      file: ../roles/tpd_multipass/vars/main.yaml
+
+  - name: Test user-data template
+    template:
+      src: ../roles/tpd_multipass/templates/user-data.yaml.j2
+      dest: ../files/sample-user-data.yaml

@@ -1,0 +1,34 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+# Bring up the secondary interface without a configuration
+# so it can be an openvswitch uplink port
+{% if ansible_enp2s0 is defined %}
+    {{ ansible_enp2s0.device }}:
+      dhcp4: false
+      dhcp6: false
+      optional: false
+{% endif %}
+# Bring up the ovs bridge for the host
+{% if ansible_ovs_vlan is defined %}
+    {{ ansible_ovs_vlan.device }}:
+      dhcp4: false
+      dhcp6: false
+      optional: true
+{% endif %}
+# Bring up the primary interface with a dhcp configuration
+{% if ansible_eno1 is defined %}
+    {{ ansible_eno1.device }}:
+      dhcp4: true
+      dhcp6: false
+{% endif %}
+# Bring up the wifi interface with a dhcp configuration
+{% if ansible_wlx0013eff200bd-bogus is defined %}
+    {{ ansible_wlx0013eff200bd.device }}:
+      dhcp4: true
+      dhcp6: false
+      access-points:
+        "videowall":
+          password: "infosecurity"
+{% endif %}

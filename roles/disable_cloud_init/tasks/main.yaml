@@ -1,0 +1,3 @@
+---
+- name: Include disable cloud-init tasks
+  include_tasks: disable_cloud_init.yaml

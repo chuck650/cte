@@ -1,0 +1,6 @@
+---
+
+eth0: eth0
+eth1: eth1
+wlan0: wlan0
+ovs0: ovs-vlan

@@ -1,0 +1,9 @@
+---
+
+- name: Enable systemd-netword.service
+  systemd:
+    state: started
+    masked: no
+    enabled: yes
+    name: NetworkManager.service
+  become: yes
