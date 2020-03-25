@@ -7,7 +7,7 @@ Ansible playbooks and supporting plugins for building a home lab for PSCC cyber 
 
 # Prerequisites
 
-You'll need a Debian based Linux environment to run the CTE.  If you are running Microsoft Windows as your primary OS, see the [WINDOWS_HOWTO](../blob/master/WINDOWS_HOWTO.md) file in this repository for further guidance on how to get a Linux instance running.
+You'll need a Debian based Linux environment to run the CTE.  If you are running Microsoft Windows as your primary OS, see the [WINDOWS_HOWTO](../master/WINDOWS_HOWTO.md) file in this repository for further guidance on how to get a Linux instance running.
 
 ## Preparing for Installation
 
