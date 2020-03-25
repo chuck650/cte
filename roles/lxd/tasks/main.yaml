@@ -1,0 +1,26 @@
+---
+- name: Remove deprecated packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - lxd
+    - lxc
+  become: yes
+
+- name: Install snapd
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - snapd
+  become: yes
+
+- name: Install lxd snap package
+  snap:
+    name: "{{ item }}"
+    state: present
+    classic: yes
+  with_items:
+    - lxd
+  become: yes

@@ -1,0 +1,6 @@
+---
+- hosts: localhost
+  connection: local
+  tasks: {}
+  roles:
+   - ssh_client

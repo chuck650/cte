@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: ssh_client
+  - role: openvswitch

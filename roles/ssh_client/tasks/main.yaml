@@ -1,0 +1,30 @@
+---
+- name: Install openvswitch packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - openssh-client
+  become: yes
+  tags:
+    - install_openssh
+  when: ansible_facts['os_family'] == "Debian"
+  
+# Create a ~/.ssh directory for user if it does not exist
+- name: Create/verify .ssh directory
+  file:
+    path: "{{ ansible_user_dir }}/.ssh"
+    state: directory
+    mode: 0700
+
+# Create a ~/.ssh/id_rsa ssh keyfile for user if it does not exist
+- name: Create/verify rsa ssh key
+  shell:
+    cmd: ssh-keygen -t rsa -N "" -f {{ rsa_key_path }}
+    creates: "{{ rsa_key_path }}"
+
+# Create a ~/.ssh/id_ecdsa ssh keyfile for user if it does not exist
+- name: Create/verify ecdsa ssh key
+  shell:
+    cmd: ssh-keygen -t ecdsa -N "" -f {{ ecdsa_key_path }}
+    creates: "{{ ecdsa_key_path }}"

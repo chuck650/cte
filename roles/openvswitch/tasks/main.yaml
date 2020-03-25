@@ -2,10 +2,11 @@
 - name: Install openvswitch packages
   apt:
     name: "{{ item }}"
-    state: present
+    state: latest
   with_items:
     - openvswitch-switch
     - openvswitch-pki
   become: yes
   tags:
-    - install_openvswitch  
+    - install_openvswitch
+  when: ansible_facts['os_family'] == "Debian"

@@ -16,27 +16,61 @@
       changed_when: false
       check_mode: false
 
-    - name: Get physical interfaces names
+    - name: Get ovs-vsctl executable
+      command: which ovs-vsctl
+      register: ovs_vsctl_executable
+      ignore_errors: false
+      changed_when: false
+      check_mode: false
+
+    - name: Get openvswitch bridge names
       shell: ovs-vsctl show | grep -oP '^\s+Bridge\s+\"?\K([^\s\"]+)'
       become: yes
       register: openvswitch_bridges
       ignore_errors: false
       changed_when: false
       check_mode: false
+      when: ovs_vsctl_executable.stdout is defined
+
+    - name: Get virsh executable
+      command: which virsh
+      register: virsh_executable
+      ignore_errors: false
+      changed_when: false
+      check_mode: false
 
     - name: Get hypervisor nodeinfo
       command: virsh nodeinfo
+      become: yes
       register: hypervisor_nodeinfo
       ignore_errors: false
       changed_when: false
       check_mode: false
+      when: virsh_executable.stdout is defined
 
     - name: Get hypervisor domains
       command: virsh -q list --name --all
+      become: yes
       register: hypervisor_domains
       ignore_errors: false
       changed_when: false
       check_mode: false
+
+    - name: Show form factor
+      debug:
+        msg: "{{ ansible_form_factor }}"
+
+    - name: Show OS family
+      debug:
+        msg: "{{ ansible_os_family }}"
+
+    - name: Show virtualization role
+      debug:
+        msg: "{{ ansible_virtualization_role }}"
+
+    - name: Show virtualization type
+      debug:
+        msg: "{{ ansible_virtualization_type }}"
 
     - name: Show physical interfaces
       debug:
@@ -59,10 +93,12 @@
       debug:
         msg: "{{ item }}"
         verbosity: 1
-      loop: "{{ hpervisor_nodeinfo.stdout_lines }}"
+      loop: "{{ hypervisor_nodeinfo.stdout_lines }}"
+      when: hypervisor_nodeinfo.stdout is defined
 
     - name: Show hypervisor_domains
       debug:
         msg: "{{ item }}"
         verbosity: 1
       loop: "{{ hypervisor_domains.stdout_lines }}"
+      when: hypervisor_domains.stdout is defined

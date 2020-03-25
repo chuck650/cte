@@ -1,0 +1,42 @@
+cte:
+  tpd:
+    network:
+      public: &pub
+        bridge: 'cte-tpd-pub'
+        ipv4: ['10.220.223.0/24']
+        gateway: '10.220.223.1'
+      dmz: &dmz
+        bridge: 'cte-tpd-dmz'
+        ipv4: ['10.31.16.0/24']
+        gateway: '10.31.16.1'
+      private: &pri
+        bridge: 'cte-tpd-pri'
+        ipv4: ['172.31.17.0/24']
+        gateway: '10.31.17.1'
+    containers:
+      - name: tpd-r1
+        ethernets:
+          - eth0:
+            bridge: *pub
+            ipv4: ['10.220.223.254/24']
+          - eth1:
+            bridge: *dmz
+            ipv4: ['172.31.16.1/24']
+      - name: tpd-r2
+        ethernets:
+          - eth0:
+            bridge: *dmz
+            ipv4: ['172.31.16.254/24']
+          - eth1:
+            bridge: *pri
+            ipv4: ['172.31.17.1/24']
+      - name: tpd-www1
+        ethernets:
+          - eth0:
+            bridge: *dmz
+            ipv4: ['172.31.16.11/24']
+      - name: tpd-db1
+        ethernets:
+          - eth0:
+            bridge: *pri
+            ipv4: ['172.31.17.11/24']
