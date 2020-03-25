@@ -39,3 +39,16 @@ Here are the requirements for the virtual machine that need to be configured wit
 You may find your hypervisor has additional requirements to get Linux functioning, such as special device drivers.  Consult you hypervisor documentation and the Internet for help with these.
 
 It may be possible to allocate as little at 8 GiB of RAM to the Linux virtual machine, but performance will likely suffer under some conditions when running multiple parts of the CTE simultaneously, as resource demand can be higher under certain scenarios.  Windows 10 **will** require a minimum of 8 GiB of RAM to maintain the stability of the system and the hypervisor.  Allocating less then 8 GiB of RAM will likely result in hypervisor instability, Windows instability, Windows locking up or a complete system crash.  **You have been warned!**
+
+## Installing Linux with Multipass
+
+One option is to download and install Multipass on windows, along with virtualbox, and use the multipass command line tool to install an Ubuntu cloud image on your Windows system.  Multipass will make most of the choices for you and setup a new Linux environment in a rather short amount of time.
+
+[Multipass for Windows](https://multipass.run/docs/installing-on-windows "How to intall Multipass on Windows")
+
+To configure Multipass to use the VirtualBox hypervisor and launch an instance of Ubuntu Eoan, enter the following commands.
+
+```cmd
+C:\WINDOWS\system32> multipass set local.driver=virtualbox
+C:\WINDOWS\system32> multipass launch --name cte eoan
+```

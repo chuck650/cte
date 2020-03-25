@@ -2,3 +2,4 @@
 dependencies:
   - role: ssh_client
   - role: openvswitch
+  - role: lxd

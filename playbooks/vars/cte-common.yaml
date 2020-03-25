@@ -1,2 +1,4 @@
+rsa_key_path: '~/.ssh/id_rsa'
+ecdsa_key_path: '~/.ssh/id_ecdsa'
 cte:
   networks: {}

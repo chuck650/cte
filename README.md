@@ -4,6 +4,35 @@
 Ansible playbooks and supporting plugins for building a home lab for PSCC cyber defense students.
 
 ---
+
+# Prerequisites
+
+You'll need a Debian based Linux environment to run the CTE.  If you are running Microsoft Windows as your primary OS, see the WINDOWS_HOWTO.md file in this repository for further guidance on how to get a Linux instance running.
+
+## Preparing for Installation
+
+Ensure the system is up to date with all packages.
+
+```bash
+$ sudo apt update
+$ sudo apt -y full-upgrade
+```
+
+Ensure you have a basic Python execution environment.
+
+```bash
+$ sudo apt install python python3
+$ sudo apt -y full-upgrade
+```
+
+Install Ansible.
+
+```bash
+$ sudo apt install software-properties-common
+$ sudo apt-add-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+```
+
 # Installation
 
 Create a  directory to install the CTE ansible environment.
