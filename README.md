@@ -42,13 +42,6 @@ Create a  directory to install the CTE ansible environment.
 ~/ansible$ git clone https://github.com/chuck650/cte.git
 ```
 
-## Initialize and setup the CTE using the CTE initialization playbook
-
-```bash
-~$ cd ~/ansible/cte
-~/ansible/cte$ ansible
-```
-
 ## Conduct a basic system inventory
 
 Run the ansible setup module against the localhost and tee the output into a file for future reference.
@@ -56,7 +49,24 @@ Run the ansible setup module against the localhost and tee the output into a fil
 ```bash
 $ ansible -i localhost -m setup | tee ~/config-${USER}.txt
 ```
+
+## Conduct a more in-depth system inventory
+
+Run the cte-config playbook and tee the output into a file for future reference.
+
+```bash
+~/ansible/cte$ ansible-playbook playbooks/cte-config | tee ~/cte-config-${USER}.txt
+```
+
+## Initialize and setup the CTE using the CTE initialization playbook
+
+```bash
+~$ cd ~/ansible/cte
+~/ansible/cte$ ansible-playbook playbooks/cte-common
+```
+
 ---
+
 # Examples of Usage
 
 ## Override default ansible configuration
