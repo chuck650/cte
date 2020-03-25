@@ -20,11 +20,6 @@ Create a  directory to install the CTE ansible environment.
 ~$ cd ~/ansible/cte
 ~/ansible/cte$ ansible
 ```
-<pre>
-<code class="language-bash">
-<span style="user-select:none;">~/test$</span> cmd
-</code>
-</pre>
 
 ## Conduct a basic system inventory
 
@@ -105,4 +100,30 @@ roles/
     webtier/              # same kind of structure as "common" was above, done for the webtier role
     monitoring/           # ""
     fooapp/               # ""
+```
+
+---
+# Configuration
+
+The Cyber Training Environment is established using a set of Ansible playbooks that execute a set of tasks organized by the role and location of the target system.  These tasks are supported by Ansible modules and plugins written in Python.  Custom plugins are also written in Python and extend the core capabilities of Ansible.
+
+CTE uses a custom inventory plugin to discover and report on virtual machines managed by Canonical's Multipass VM controller.
+
+## Multipass Inventory plugin
+
+You can view the documentation on the plugin using this command.
+
+```bash
+~/ansible/cte$ ansible-doc -t inventory multipass
+```
+
+You can get a list of the Ansible attributes of all your Multipass VM instances in YAML using this command.
+
+```bash
+~/ansible/cte$ ansible-inventory -i inventory/multipass.yaml --playbook-dir ./ --list
+```
+And as a graph, using this command.
+
+```bash
+~/ansible/cte$ ansible-inventory -i inventory/multipass.yaml --playbook-dir ./ --graph
 ```

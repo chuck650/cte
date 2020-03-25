@@ -21,7 +21,7 @@
     verbosity: 1
   loop: "{{ ovs_vlan_ports.stdout_lines }}"
 
-- name: Add iface enps20 to ovs-vlan bridges
+- name: Add iface enp2s0 to ovs-vlan bridges
   shell: ovs-vsctl add-port ovs-vlan enp2s0
   when: "'enp2s0' not in ovs_vlan_ports.stdout_lines"
   become: yes

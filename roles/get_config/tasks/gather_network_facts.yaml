@@ -2,9 +2,7 @@
 - name: Get network gather network facts
   setup:
     gather_subset:
-#      - all
       - network
-#    filter: ansible_e*
 
 - name: Get physical wired predictable interfaces names
   command: find /sys/class/net -maxdepth 1 -type l -not -lname '*virtual*' -path /sys/class/net/en* -printf '%f\n'
@@ -21,7 +19,6 @@
 - name: Get ovs bridge interfaces names
   shell: ovs-vsctl show | grep -oP '^\s+Bridge\s+\"?\K([^\s\"]+)'
   become: yes
-#  become_user: "chnelson"
   register: openvswitch_bridges
   ignore_errors: false
   changed_when: false
@@ -42,9 +39,4 @@
 - name: Show default interface
   debug:
     msg: "Default interface: {{ ansible_default_ipv4.interface }}"
-    verbosity: 1
-
-- name: Show enp2s0 interface
-  debug:
-    msg: "Interface: {{ ansible_enp2s0 }}"
     verbosity: 1
