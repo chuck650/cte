@@ -61,8 +61,6 @@ class InventoryModule(BaseInventoryPlugin):
     def _get_structured_multipass_inventory(self, source):
         if not os.path.isfile("/snap/bin/multipass"):
             return {}
-        else:
-            return {}
         try:
             process = Popen(['multipass','list', '--format','yaml'], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
@@ -71,6 +69,8 @@ class InventoryModule(BaseInventoryPlugin):
         except yaml.YAMLError as e:
             print(e)
             sys.exit(1)
+        except FileNotFoundError as e:
+            return {}
 
     def _populate(self):
         '''Return the hosts and groups'''
