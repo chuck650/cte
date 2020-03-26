@@ -34,4 +34,5 @@
   register: zpool
   ignore_errors: true
   changed_when: zpool.rc == 1
+  notify: Initialize LXD
   check_mode: false
