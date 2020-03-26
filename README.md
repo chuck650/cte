@@ -24,6 +24,15 @@ Ensure you have a basic Python execution environment.
 $ sudo apt install python python3
 ```
 
+Generate RSA and ECDA ssh keys and add the public keys to the authorized keys file.
+
+```bash
+~$ ssh-keygen -t rsa -b 2048
+~$ ssh-keygen -t ecdsa -b 521
+~$ cat .ssh/id_rsa.pub >> .ssh/authorized_keys
+~$ cat .ssh/id_ecdsa.pub >> .ssh/authorized_keys
+```
+
 Install Ansible.
 
 ```bash
