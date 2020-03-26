@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 from subprocess import Popen, PIPE
-import yaml
+import yaml, os
 
 DOCUMENTATION = r'''
     name: multipass
@@ -59,6 +59,10 @@ class InventoryModule(BaseInventoryPlugin):
        self._populate()
 
     def _get_structured_multipass_inventory(self, source):
+        if not os.path.isfile("/snap/bin/multipass"):
+            return {}
+        else:
+            return {}
         try:
             process = Popen(['multipass','list', '--format','yaml'], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
