@@ -51,12 +51,19 @@ Create a  directory to install the CTE ansible environment.
 ~/ansible$ git clone https://github.com/chuck650/cte.git
 ```
 
+To update the installation of the CTE with the most recent changes, use `git` to pull in updates to the CTE.
+
+```bash
+~$ cd ansible/cte
+~/ansible/cte$ git pull
+```
+
 ## Conduct a basic system inventory
 
 Run the ansible setup module against the localhost and tee the output into a file for future reference.
 
 ```bash
-$ ansible -m setup localhost | tee ~/config-${USER}.txt
+~/ansible/cte$ ansible -m setup localhost | tee ~/config-${USER}.txt
 ```
 
 ## Conduct a more in-depth system inventory

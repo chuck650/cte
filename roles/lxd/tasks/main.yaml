@@ -7,6 +7,7 @@
     - lxd
     - lxc
   become: yes
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Install apt packages
   apt:
@@ -16,6 +17,7 @@
     - snapd
     - zfsutils-linux
   become: yes
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Install lxd snap package
   snap:
@@ -25,3 +27,10 @@
   with_items:
     - lxd
   become: yes
+
+- name: Check ZFS Pool
+  command: zpool list -H default
+  become: yes
+  register: zpool
+  changed_when: zpool.rc == 1
+  check_mode: false
