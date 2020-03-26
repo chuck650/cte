@@ -35,5 +35,5 @@
   ignore_errors: true
   changed_when: zpool.rc == 1
   failed_when: zpool.rc >= 2
-  notify: "Initialize LXD"
+  notify: Initialize LXD
   check_mode: false
