@@ -8,12 +8,13 @@
     - lxc
   become: yes
 
-- name: Install snapd
+- name: Install apt packages
   apt:
     name: "{{ item }}"
-    state: present
+    state: latest
   with_items:
     - snapd
+    - zfsutils-linux
   become: yes
 
 - name: Install lxd snap package

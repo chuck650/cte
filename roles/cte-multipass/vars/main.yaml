@@ -1,0 +1,10 @@
+---
+rsa_pub_key_path: "~/.ssh/id_rsa"
+ecdsa_key_path: "~/.ssh/id_ecdsa"
+vm_os_version: eoan
+vm_name: cte
+vm_packages:
+  - npm
+  - nodejs
+  - tmux
+  - vim

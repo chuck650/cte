@@ -1,0 +1,18 @@
+config: {}
+networks: []
+storage_pools:
+- config:
+    size: "{{ zpool_size }}"
+  description: ""
+  name: default
+  driver: zfs
+profiles:
+- config: {}
+  description: ""
+  devices:
+    root:
+      path: /
+      pool: default
+      type: disk
+  name: default
+cluster: null

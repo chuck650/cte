@@ -46,9 +46,9 @@ One option is to download and install Multipass on windows, along with virtualbo
 
 [Multipass for Windows](https://multipass.run/docs/installing-on-windows "How to intall Multipass on Windows")
 
-To configure Multipass to use the VirtualBox hypervisor and launch an instance of Ubuntu Eoan, enter the following commands.
+For example, to configure Multipass to use the VirtualBox hypervisor and launch an instance of Ubuntu Eoan named *cte* with *40G* of storage space and *12G* of memory, enter the following commands.
 
 ```cmd
 C:\WINDOWS\system32> multipass set local.driver=virtualbox
-C:\WINDOWS\system32> multipass launch --name cte eoan
+C:\WINDOWS\system32> multipass launch --n cte -d 40G -m 12G eoan
 ```

@@ -47,7 +47,7 @@ Create a  directory to install the CTE ansible environment.
 Run the ansible setup module against the localhost and tee the output into a file for future reference.
 
 ```bash
-$ ansible -i localhost -m setup | tee ~/config-${USER}.txt
+$ ansible -m setup localhost | tee ~/config-${USER}.txt
 ```
 
 ## Conduct a more in-depth system inventory
