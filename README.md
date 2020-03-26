@@ -167,10 +167,17 @@ You can view the documentation on the plugin using this command.
 You can get a list of the Ansible attributes of all your Multipass VM instances in YAML using this command.
 
 ```bash
-~/ansible/cte$ ansible-inventory -i inventory/multipass.yaml --playbook-dir ./ --list
+~/ansible/cte$ ansible-inventory -i inventory/multipass.yaml --list
 ```
+
+you can see all found inventory, using this command.
+
+```bash
+~/ansible/cte$ ansible-inventory --list
+```
+
 And as a graph, using this command.
 
 ```bash
-~/ansible/cte$ ansible-inventory -i inventory/multipass.yaml --playbook-dir ./ --graph
+~/ansible/cte$ ansible-inventory --graph
 ```
