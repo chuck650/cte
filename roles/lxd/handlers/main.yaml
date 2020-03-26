@@ -1,4 +1,5 @@
 ---
 - name: Initialize LXD
-  debug:
-    msg: let's initialize LXD with a preseed file
+  import_tasks: init_lxd.yaml
+#  debug:
+#    msg: let's initialize LXD with a preseed file

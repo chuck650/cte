@@ -1,0 +1,13 @@
+---
+- block:
+  - name: Generate preseed file
+    template:
+      src: preseed.yaml.j2
+      dest: /tmp/preseed.yaml
+
+  - name: Initialize lxd with preseed file
+    shell: cat /tmp/preseed.yaml | lxd init --preseed
+    become: yes
+- name: All done
+  debug:
+    msg: Initialized LXD with a preseed file
