@@ -32,6 +32,6 @@
   command: zpool list -H default
   become: yes
   register: zpool
-  ignore_errors: false
+  ignore_errors: true
   changed_when: zpool.rc == 1
   check_mode: false

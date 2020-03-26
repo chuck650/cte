@@ -1,0 +1,4 @@
+---
+- name: Initialize LXD
+  debug:
+    msg: let's initialize LXD with a preseed file
