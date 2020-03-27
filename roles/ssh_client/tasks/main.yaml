@@ -18,13 +18,45 @@
     mode: 0700
 
 # Create a ~/.ssh/id_rsa ssh keyfile for user if it does not exist
-- name: Create/verify rsa ssh key
-  shell:
-    cmd: ssh-keygen -t rsa -N "" -f {{ rsa_key_path }}
-    creates: "{{ rsa_key_path }}"
+- name: Create a 2048-bit SSH RSA key for user at ~/.ssh/id_rsa
+  user:
+    name: "{{ ansible_user_id }}"
+    generate_ssh_key: yes
+    ssh_key_type: rsa
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+  register: rsa
+
+#- name: Create/verify rsa ssh key
+#  shell:
+#    cmd: ssh-keygen -t rsa -N "" -f {{ rsa_key_path }}
+#    creates: "{{ rsa_key_path }}"
+
+# Add generated RSA key to authorized_keys file
+- name: Set authorized key taken from file
+  authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ rsa.ssh_public_key }}"
 
 # Create a ~/.ssh/id_ecdsa ssh keyfile for user if it does not exist
-- name: Create/verify ecdsa ssh key
-  shell:
-    cmd: ssh-keygen -t ecdsa -b 521 -N "" -f {{ ecdsa_key_path }}
-    creates: "{{ ecdsa_key_path }}"
+- name: Create a 521-bit SSH ECDSA key for user at ~/.ssh/id_ecdsa
+  user:
+    name: "{{ ansible_user_id }}"
+    generate_ssh_key: yes
+    ssh_key_type: ecdsa
+    ssh_key_bits: 521
+    ssh_key_file: .ssh/id_ecdsa
+  register: ecdsa
+
+#- name: Create/verify ecdsa ssh key
+#  shell:
+#    cmd: ssh-keygen -t ecdsa -b 521 -N "" -f {{ ecdsa_key_path }}
+#    creates: "{{ ecdsa_key_path }}"
+
+# Add generated ECDSA key to authorized_keys file
+- name: Set authorized key taken from file
+  authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ ecdsa.ssh_public_key }}"

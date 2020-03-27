@@ -41,6 +41,8 @@ $ sudo apt-add-repository --yes --update ppa:ansible/ansible
 $ sudo apt install ansible
 ```
 
+[Ansible user guide](https://docs.ansible.com/ansible/latest/user_guide/index.html "Covers how to work with Ansible")
+
 # Installation
 
 Create a  directory to install the CTE ansible environment.
@@ -68,6 +70,10 @@ Run the ansible setup module against the localhost and tee the output into a fil
 
 ## Conduct a more in-depth system inventory
 
+Ansible provides the DevOps tool that manages the CTE. Much of the power of the tool comes from using Ansible playbooks to group many DevOps tasks together.  
+
+[About playbooks](https://docs.ansible.com/ansible/latest/user_guide/playbooks_intro.html#about-playbooks "Provides the basis for really simple configuration management")
+
 Run the cte-config playbook and tee the output into a file for future reference.
 
 ```bash
@@ -84,6 +90,8 @@ Run the cte-config playbook and tee the output into a file for future reference.
 ---
 
 # Examples of Usage
+
+Here are some examples of using the CTE Ansible DevOps tool to manage the CTE.  These are meant as examples, and should only be run when you need to perform the tasks described in the example.
 
 ## Override default ansible configuration
 
@@ -105,11 +113,15 @@ $ ansible -m ping localhost
 
 ## Run a playbook
 ```bash
-~/ansible/cte$ ansible-playbook  disable-network-manager
+~/ansible/cte$ ansible-playbook  playbooks/${playbook_name}
 ```
 
 ---
 # CTE Example Directory Structure
+
+Here is an example directory structure for an Ansible DevOps project.  This will give you some familiarity with how an Ansible project is structured and where the different Ansible components can be found.
+
+[Ansible best practices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html "Tips for making the most of Ansible and Ansible playbooks")
 
 ```
 production                # inventory file for production servers

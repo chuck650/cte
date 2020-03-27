@@ -27,13 +27,37 @@
   with_items:
     - lxd
   become: yes
+  when: ansible_system == "Linux"
+
+- name: Add user to lxd group
+  user:
+    name: "{{ ansible_user_id }}"
+    groups: lxd
+  become: yes
+  when: ansible_system == "Linux"
+
+- name: Check lxd storage config
+  command: lxc storage get default source
+  become: yes
+  register: lxd_storage
+  changed_when: lxd_storage.rc != 0
+  failed_when: false
+  notify: Initialize LXD
+  when: ansible_system == "Linux"
+
+- name: Show lxd storage pool location
+  debug:
+    msg: "{{ lxd_storage.stdout }}"
 
 - name: Check ZFS Pool
-  command: zpool list -H default
+  command: zpool list -Ho health default
   become: yes
   register: zpool
   ignore_errors: true
   changed_when: zpool.rc == 1
-  failed_when: zpool.rc >= 2
-  notify: Initialize LXD
+  failed_when: false
+  notify: Fix default pool
   check_mode: false
+  when:
+    - ansible_system == "Linux"
+    - lxd_storage.rc == 0

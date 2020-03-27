@@ -1,1 +1,12 @@
 ---
+- name: Set authorized RSA key for current user
+  authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+- name: Set authorized ECDSA key for current user
+  authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ecdsa.pub') }}"

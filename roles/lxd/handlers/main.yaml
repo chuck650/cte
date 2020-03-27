@@ -1,5 +1,35 @@
 ---
-- name: Initialize LXD
-  import_tasks: init_lxd.yaml
-#  debug:
-#    msg: let's initialize LXD with a preseed file
+- name: "Initialize LXD"
+  debug:
+    msg: Let's initialize LXD with a preseed file
+  changed_when: true
+  notify: "Initialize LXD: Generate preseed file"
+  when: ansible_system == "Linux"
+
+- name: "Initialize LXD: Generate preseed file"
+  template:
+    src: preseed.yaml.j2
+    dest: /tmp/preseed.yaml
+  changed_when: true
+  notify: "Initialize LXD: Run initialization"
+  when: ansible_system == "Linux"
+
+- name: "Initialize LXD: Run initialization"
+  shell:
+    cmd: cat /tmp/preseed.yaml | sudo lxd init --preseed
+  become: yes
+  when: ansible_system == "Linux"
+
+- name: Fix default pool
+  debug:
+    msg: "default ZFS pool needs fixing:\n  health: {{ zpool.stdout }}\n  rc: {{ zpool.rc }}"
+  changed_when: true
+  notify: "Create default ZFS Pool"
+  when: ansible_system == "Linux"
+
+- name: Create default ZFS Pool
+  command: /bin/true
+  args:
+    creates: /var/snap/lxd/common/lxd/disks/default.img
+  when: ansible_system == "Linux"
+# After creating a new pool, probably need to restart the two snap.lxd services
