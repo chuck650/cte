@@ -1,0 +1,46 @@
+---
+#- name: Debug container
+#  debug:
+#    msg: "{{ container | from_yaml }}"
+
+- name: "Show {{ container.name }} nics"
+  debug:
+    msg: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
+  vars:
+    container: "{{ container }}"
+
+# Build a container
+- name: "Create container: {{ container.name }}"
+  lxd_container:
+    name: "{{ container.name }}"
+    state: stopped
+    devices: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
+#    config: "{{ 'user.user-data:{' +  lookup('template', 'user-data.yaml.j2') + '}' | from_yaml }}"
+    source:
+      type: image
+      mode: pull
+      server: https://cloud-images.ubuntu.com/releases
+      protocol: simplestreams
+      alias: eoan
+    profiles: ["default", "cte-user"]
+  when: ansible_system == "Linux"
+  vars:
+    user:
+      name: "{{ ansible_user_id }}"
+      password: "{{ cte_user_password | default('password') }}"
+      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+    container: "{{ container }}"
+    ssh_keys:
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
+  tags:
+    - cte-tpd
+
+- name: "Start container: {{ container.name }}"
+  lxd_container:
+    name: "{{ container.name }}"
+    state: started
+    #wait_for_ipv4_addresses: true
+    #timeout: 60
+  tags:
+    - cte-tpd

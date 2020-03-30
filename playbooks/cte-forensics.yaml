@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connection: local
+  tasks: []
+  roles:
+   - cte-forensics
+  vars_files:
+    - vars/cte-common.yaml

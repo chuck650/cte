@@ -1,0 +1,8 @@
+---
+- hosts: localhost
+  connection: local
+  tasks: []
+  roles:
+   - cte-tpd
+  vars_files:
+    - vars/cte-common.yaml

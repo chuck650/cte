@@ -1,0 +1,11 @@
+ipv6.address=none
+ipv4.address={{ network.value.address | default('none', true) }}
+ipv4.firewall=false
+ipv4.nat=false
+ipv4.dhcp=true
+ipv4.dhcp.gateway={{ network.value.gateway }}
+bridge.driver=openvswitch
+{% if false %}
+raw.dsnmasq={{ default('') }}
+{% endif %}
+dns.domain={{ network.value.domain | default('') }}

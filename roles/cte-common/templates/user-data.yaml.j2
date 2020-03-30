@@ -1,0 +1,12 @@
+#cloud-config
+users:
+  - name: {{ ansible_user_id }}
+    gecos: {{ gecos }}
+    groups: sudo
+    passwd: {{ user.password }}
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    lock-passwd: false
+    ssh-authorized-keys: [{{ ssh_keys | join(', ') }}]
+packages: [{{ apt.packages | join(', ') }}]
+byobu_by_default: disable

@@ -1,5 +1,9 @@
 ---
 - hosts: localhost
+#  vars_prompt:
+#    - name: cte_password
+#      prompt: Enter a password for the CTE.
+#      private: yes
   connection: local
   tasks: []
   roles:

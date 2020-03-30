@@ -1,0 +1,14 @@
+cte:
+  netsec:
+    networks:
+      public: &pub
+        name: 'cte-netsec'
+        net: '10.240.243.0/24'
+        gateway: '10.240.243.1'
+        address: '10.240.243.1/24'
+        domain: netsec.cte
+    containers:
+      - name: netsec-ca1
+        nics:
+          - parent: *pub
+            ipv4: '10.240.243.51/24'

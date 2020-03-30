@@ -5,11 +5,11 @@ Ansible playbooks and supporting plugins for building a home lab for PSCC cyber 
 
 ---
 
-# Prerequisites
+## Prerequisites
 
 You'll need a Debian based Linux environment to run the CTE.  If you are running Microsoft Windows as your primary OS, see the [WINDOWS_HOWTO](../master/WINDOWS_HOWTO.md) file in this repository for further guidance on how to get a Linux instance running.
 
-## Preparing for Installation
+### Preparing for Installation
 
 Ensure the system is up to date with all packages.
 
@@ -42,8 +42,9 @@ $ sudo apt install ansible
 ```
 
 [Ansible user guide](https://docs.ansible.com/ansible/latest/user_guide/index.html "Covers how to work with Ansible")
+[Ansible tutorial](http://riptutorial.com/ebook/ansible "Free ebook written by many hardworking individuals at Stack Overflow")
 
-# Installation
+## Installation
 
 Create a  directory to install the CTE ansible environment.
 
@@ -60,7 +61,7 @@ To update the installation of the CTE with the most recent changes, use `git` to
 ~/ansible/cte$ git pull
 ```
 
-## Conduct a basic system inventory
+### Conduct a basic system inventory
 
 Run the ansible setup module against the localhost and tee the output into a file for future reference.
 
@@ -68,7 +69,7 @@ Run the ansible setup module against the localhost and tee the output into a fil
 ~/ansible/cte$ ansible -m setup localhost | tee ~/config-${USER}.txt
 ```
 
-## Conduct a more in-depth system inventory
+### Conduct a more in-depth system inventory
 
 Ansible provides the DevOps tool that manages the CTE. Much of the power of the tool comes from using Ansible playbooks to group many DevOps tasks together.  
 
@@ -80,16 +81,34 @@ Run the cte-config playbook and tee the output into a file for future reference.
 ~/ansible/cte$ ansible-playbook playbooks/cte-config | tee ~/cte-config-${USER}.txt
 ```
 
-## Initialize and setup the CTE using the CTE initialization playbook
+### Initialize and setup the CTE using the CTE initialization playbook
 
 ```bash
 ~$ cd ~/ansible/cte
 ~/ansible/cte$ ansible-playbook playbooks/cte-common
 ```
 
+## Setting up a class
+
+Depending on the classes you are taking, you may need to build one or more learning environments.  Each class has a separate skills development area (SDA), usually divided by a different network and infrastructure container.  There are two ways to build a skills development area using the CTE.  First, you can call the SDA's playbook with ansible, or you can call the CTE playbook with a parameter for the class name.
+
+Here's how to call a playbook directly for the network security class
+
+```bash
+$ ansible-playbook -v playbooks/cte-netsec.yaml
+```
+
+Here's how to call the CTE playbook with a class name for network security.
+
+```bash
+$ ansible-playbook -v playbooks/cte.yaml -e 'class=netsec'
+```
+
+
+
 ---
 
-# Examples of Usage
+## Examples of Usage
 
 Here are some examples of using the CTE Ansible DevOps tool to manage the CTE.  These are meant as examples, and should only be run when you need to perform the tasks described in the example.
 

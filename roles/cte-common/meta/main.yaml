@@ -1,5 +1,21 @@
 ---
 dependencies:
+  - role: cte-facts
+    when: ansible_system == "Linux"
+    tags:
+      - always
+
   - role: ssh_client
+    when: ansible_system == "Linux"
+    tags:
+      - cte-common
+
   - role: openvswitch
+    when: ansible_system == "Linux"
+    tags:
+      - cte-common
+
   - role: lxd
+    when: ansible_system == "Linux"
+    tags:
+      - cte-common

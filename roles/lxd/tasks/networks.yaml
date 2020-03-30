@@ -1,0 +1,48 @@
+---
+#- name: Debug network vars
+#  debug:
+#    msg: "{{ network.value | from_yaml }}"
+
+#- name: Debug template
+#  debug:
+#    msg: "{{ lookup('template', 'network_options.j2') | from_yaml }}"
+
+- name: "Setup network"
+  command:
+    cmd: |
+      lxc network create {{ network.value.name }}
+      {{ lookup('template', 'network_options.j2') }}
+#      ipv6.address=none
+#      ipv4.address={{ network.value.address }}
+#      ipv4.firewall=false
+#      ipv4.nat=false
+#      bridge.driver=openvswitch
+#      dns.domain={{ network.value.domain }}
+  become: yes
+  when: ansible_system == "Linux"
+  args:
+    creates: /sys/devices/virtual/net/{{ network.value.name }}
+  tags:
+    - cte-tpd
+
+- name: Set systemd-resolve domain name
+  command:
+    cmd: resolvectl domain cte-tpd {{ network.value.domain }}
+  become: yes
+  when:
+    - ansible_system == "Linux"
+    - network.value.domain is defined
+  changed_when: false
+  tags:
+    - cte-tpd
+
+- name: Set systemd-resolve dns address
+  command:
+    cmd: resolvectl dns cte-tpd {{ network.value.gateway | ipaddr('address') }}
+  become: yes
+  when:
+    - ansible_system == "Linux"
+    - network.value.gateway is defined
+  changed_when: false
+  tags:
+    - cte-tpd

@@ -1,0 +1,11 @@
+{% for nic in container.nics %}
+"eth{{ loop.index0 }}": {
+  "name": "eth{{ loop.index0 }}",
+  "nictype": "bridged",
+  "parent": "{{ nic.parent.name }}",
+  "type": "nic"
+{% if nic.ipv4 is defined %}
+  ,"ipv4.address": "{{ nic.ipv4  | ipaddr('address') }}"
+{% endif %}
+}
+{% endfor %}

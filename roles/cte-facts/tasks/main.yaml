@@ -1,0 +1,15 @@
+---
+- name: Create a directory for storing CTE config for ansible_user_id
+  file:
+    path: "{{ ansible_user_dir }}/.cte"
+    state: directory
+  run_once: true
+  tags:
+    - always
+
+- name: Set CTE user dir
+  set_fact:
+    cte_user_dir: "{{ ansible_user_dir }}/.cte"
+  run_once: true
+  tags:
+    - always

@@ -1,0 +1,11 @@
+#cloud-config
+users:
+  - name: {{ user.name }}
+    gecos: {{ user.gecos }}
+    groups: sudo
+    passwd: {{ user.password }}
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    lock-passwd: false
+    ssh-authorized-keys: [{{ ssh_keys | join(', ') }}]
+packages: [python,htop,tree,tmux]

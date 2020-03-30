@@ -61,3 +61,33 @@
   when:
     - ansible_system == "Linux"
     - lxd_storage.rc == 0
+
+- name: Create a profile
+  debug:
+    msg: "{{ lookup('template', 'user-data.yaml.j2') | from_yaml }}"
+  vars:
+    user:
+      name: "{{ ansible_user_id }}"
+      password: "{{ cte_user_password | default('password') }}"
+      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+    ssh_keys:
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
+
+# TODO: Create cte profile with user.user-data, timezone, packages, etc...
+- name: Create a profile
+  lxd_profile:
+    name: cte-user
+    state: present
+    config:
+      user.user-data: "{{ lookup('template', 'user-data.yaml.j2') }}"
+#      "{{ lookup('template', 'user-data.yaml.j2') | from_yaml }}"
+    description: CTE user-data profile
+  vars:
+    user:
+      name: "{{ ansible_user_id }}"
+      password: "{{ cte_user_password | default('password') }}"
+      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+    ssh_keys:
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"

@@ -1,0 +1,14 @@
+---
+user:
+  password: password
+  ssh:
+    pubkeyfiles:
+      rsa: "~/.ssh/id_rsa.pub"
+      ecdsa: "~/.ssh/id_ecdsa.pub"
+apt:
+  packages:
+    - tmux
+    - openssh-ssh_client
+    - vim
+    - vim-airline
+    - python

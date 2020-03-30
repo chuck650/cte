@@ -1,0 +1,27 @@
+---
+# TODO: check if role exists and give good msg if it doesn't
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: "Run tasks for class: {{ class }}"
+      include_role:
+        name: cte-{{ class }}
+      when: class in classes
+      tags:
+        - cte
+
+    - name: Class tags that are supported in the CTE
+      debug:
+        msg: "Tag: {{ item }}"
+      loop: "{{ classes }}"
+      tags:
+        - never
+        - classes
+  vars:
+    classes:
+      - tpd
+      - pia
+      - netsec
+      - forensics
+  vars_files:
+    - vars/cte-common.yaml

@@ -1,0 +1,14 @@
+cte:
+  netsec:
+    networks:
+      public: &pub
+        name: 'cte-netsec'
+        net: '10.80.63.0/24'
+        gateway: '10.80.63.1'
+        address: '10.80.63.1/24'
+        domain: forensics.cte
+    containers:
+      - name: for1
+        nics:
+          - parent: *pub
+            ipv4: '10.80.63.51/24'

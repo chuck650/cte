@@ -1,12 +1,60 @@
 ---
-- name: Set authorized RSA key for current user
-  authorized_key:
-    user: "{{ ansible_user_id }}"
-    state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+#- name: Generate user-data.yaml cloud-init vars_file
+#  template:
+#    src: user-data.yaml.j2
+#    dest: "{{ cte_user_dir }}/lxc_user-data.yaml"
+#    mode: 0640
+#  vars:
+#    ssh_keys:
+#      - "{{ lookup('file', user.ssh.pubkeyfiles.rsa) }}"
+#      - "{{ lookup('file', user.ssh.pubkeyfiles.ecdsa) }}"
+#    gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+#  tags:
+#    - cte-common
+#    - cte-cloud-init
 
-- name: Set authorized ECDSA key for current user
-  authorized_key:
-    user: "{{ ansible_user_id }}"
-    state: present
-    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ecdsa.pub') }}"
+- name: Ensure ipv4 forwarding is permanently enabled
+  lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^#?net.ipv4.ip_forward.*'
+    line: net.ipv4.ip_forward = 1
+  become: yes
+  notify: "Parse sysctl changes"
+  when: ansible_system == "Linux"
+  tags:
+    - cte-common
+
+- name: Install some common packages for CTE use
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - python3
+    - python-netaddr
+    - zfsutils-linux
+    - npm
+    - nodejs
+    - tmux
+    - vim
+  become: yes
+  when: ansible_facts['os_family'] == "Debian"
+  tags:
+    - cte-common
+
+#- name: Enable ipv4 forwarding for this session
+#  command: sysctl -w net.ipv4.ip_forward=1
+#  when: ansible_system == "Linux"
+
+# sysctl -p /etc/sysctl.conf
+
+#- name: Set authorized RSA key for current user
+#  authorized_key:
+#    user: "{{ ansible_user_id }}"
+#    state: present
+#    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+#
+#- name: Set authorized ECDSA key for current user
+#  authorized_key:
+#    user: "{{ ansible_user_id }}"
+#    state: present
+#    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ecdsa.pub') }}"

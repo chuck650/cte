@@ -1,0 +1,9 @@
+---
+- name: "Parse sysctl changes"
+  command:
+    cmd: sysctl -p /etc/sysctl.conf
+  become: yes
+  changed_when: false
+  when: ansible_system == "Linux"
+  tags:
+    - always

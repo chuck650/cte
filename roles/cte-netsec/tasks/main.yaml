@@ -1,0 +1,24 @@
+---
+#- name: Show Facts
+#  debug:
+#    msg: "{{ cte_user_dir }}"
+
+# loop over the networks and create each one with config vars
+- name: Create networks
+  include_role:
+    name: lxd
+    tasks_from: networks.yaml
+  loop: "{{ query('dict', cte.netsec.networks) }}"
+#  loop: "{{ cte.tpd.networks }}"
+  loop_control:
+    loop_var: network
+
+
+# loop over the containers and create each one with config vars
+- name: Create containers
+  include_role:
+    name: lxd
+    tasks_from: containers.yaml
+  loop: "{{ cte.netsec.containers }}"
+  loop_control:
+    loop_var: container

@@ -1,0 +1,14 @@
+cte:
+  pia:
+    networks:
+      public: &pub
+        name: 'cte-pia'
+        net: '10.120.113.0/24'
+        gateway: '10.120.113.1'
+        address: '10.120.113.1/24'
+        domain: pia.cte
+    containers:
+      - name: pia1
+        nics:
+          - parent: *pub
+            ipv4: '10.120.113.51/24'
