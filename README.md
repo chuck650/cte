@@ -78,14 +78,14 @@ Ansible provides the DevOps tool that manages the CTE. Much of the power of the 
 Run the cte-config playbook and tee the output into a file for future reference.
 
 ```bash
-~/ansible/cte$ ansible-playbook playbooks/cte-config | tee ~/cte-config-${USER}.txt
+~/ansible/cte$ ansible-playbook playbooks/cte-config.yaml | tee ~/cte-config-${USER}.txt
 ```
 
 ### Initialize and setup the CTE using the CTE initialization playbook
 
 ```bash
 ~$ cd ~/ansible/cte
-~/ansible/cte$ ansible-playbook playbooks/cte-common
+~/ansible/cte$ ansible-playbook playbooks/cte-common.yaml
 ```
 
 ## Setting up a class
