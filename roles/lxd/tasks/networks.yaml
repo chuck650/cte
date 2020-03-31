@@ -12,37 +12,25 @@
     cmd: |
       lxc network create {{ network.value.name }}
       {{ lookup('template', 'network_options.j2') }}
-#      ipv6.address=none
-#      ipv4.address={{ network.value.address }}
-#      ipv4.firewall=false
-#      ipv4.nat=false
-#      bridge.driver=openvswitch
-#      dns.domain={{ network.value.domain }}
   become: yes
   when: ansible_system == "Linux"
   args:
     creates: /sys/devices/virtual/net/{{ network.value.name }}
-  tags:
-    - cte-tpd
 
 - name: Set systemd-resolve domain name
   command:
-    cmd: resolvectl domain cte-tpd {{ network.value.domain }}
+    cmd: resolvectl domain {{ network.value.name }} {{ network.value.domain }}
   become: yes
   when:
     - ansible_system == "Linux"
     - network.value.domain is defined
   changed_when: false
-  tags:
-    - cte-tpd
 
 - name: Set systemd-resolve dns address
   command:
-    cmd: resolvectl dns cte-tpd {{ network.value.gateway | ipaddr('address') }}
+    cmd: resolvectl dns {{ network.value.name }} {{ network.value.gateway | ipaddr('address') }}
   become: yes
   when:
     - ansible_system == "Linux"
     - network.value.gateway is defined
   changed_when: false
-  tags:
-    - cte-tpd
