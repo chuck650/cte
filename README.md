@@ -11,6 +11,8 @@ You'll need a Debian based Linux environment to run the CTE.  If you are running
 
 ### Preparing for Installation
 
+There are a few tasks you need to perform to get your CTE VM ready. If you created your VM using multipass and the cloud-init file generated from the [cte-multipass](https://github.com/chuck650/cte-multipass "Generate a user-data.yaml cloud-init file for multipass") project, then this part has already been done for you when the VM initialized.
+
 Ensure the system is up to date with all packages.
 
 ```bash
@@ -24,6 +26,14 @@ Ensure you have a basic Python execution environment.
 $ sudo apt install python python3
 ```
 
+**Recommended:** Create a user account for yourself in addition to the local administrator account.  Add the new user to the `sudo` group, then login with the new user's account.
+
+```bash
+$ sudo adduser ${NEW_USER}
+$ sudo adduser ${NEW_USER} sudo
+$ sudo login ${NEW_USER}
+```
+
 Generate RSA and ECDA ssh keys and add the public keys to the authorized keys file.
 
 ```bash
@@ -32,6 +42,10 @@ Generate RSA and ECDA ssh keys and add the public keys to the authorized keys fi
 ~$ cat .ssh/id_rsa.pub >> .ssh/authorized_keys
 ~$ cat .ssh/id_ecdsa.pub >> .ssh/authorized_keys
 ```
+
+> If you are going to use ssh to connect to this VM from outside the CTE, also copy any other public keys necessary to the `~/.ssh/authorized_keys` file.
+
+
 
 Install Ansible.
 
