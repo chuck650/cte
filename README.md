@@ -39,8 +39,7 @@ Generate RSA and ECDA ssh keys and add the public keys to the authorized keys fi
 ```bash
 ~$ ssh-keygen -t rsa -b 2048
 ~$ ssh-keygen -t ecdsa -b 521
-~$ cat .ssh/id_rsa.pub >> .ssh/authorized_keys
-~$ cat .ssh/id_ecdsa.pub >> .ssh/authorized_keys
+~$ cat .ssh/id_{ecd,r}sa.pub >> .ssh/authorized_keys
 ```
 
 > If you are going to use ssh to connect to this VM from outside the CTE, also copy any other public keys necessary to the `~/.ssh/authorized_keys` file.
@@ -56,7 +55,9 @@ $ sudo apt install ansible
 ```
 
 [Ansible user guide](https://docs.ansible.com/ansible/latest/user_guide/index.html "Covers how to work with Ansible")
+
 [Ansible tutorial](http://riptutorial.com/ebook/ansible "Free ebook written by many hardworking individuals at Stack Overflow")
+
 
 ## Installation
 
