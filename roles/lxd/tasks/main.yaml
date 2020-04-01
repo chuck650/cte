@@ -6,6 +6,7 @@
   with_items:
     - lxd
     - lxc
+    - lxd-client
   become: yes
   when: ansible_facts['os_family'] == "Debian"
 
