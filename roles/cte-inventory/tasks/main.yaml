@@ -1,0 +1,59 @@
+---
+- name: Get network gather network facts
+  setup:
+    gather_subset:
+      - '!all'
+      - '!any'
+      - network
+
+- name: Include interface tasks
+  include_tasks: interfaces.yaml
+
+# Check if ovs-vsctl is executable on the PATH
+- name: Get ovs-vsctl executable
+  command: which ovs-vsctl
+  register: ovs_vsctl
+  ignore_errors: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+# Only run OpenvSwitch tasks is ovs-vsctl is available
+- name: Include OpenvSwitch tasks
+  include_tasks: openvswitch.yaml
+  when: ovs_vsctl.rc == 0
+
+# Check if virsh is executable on the PATH
+- name: Get virsh executable
+  command: which virsh
+  register: virsh
+  ignore_errors: true
+  changed_when: false
+  check_mode: false
+  failed_when: false
+
+# Only run libvirt tasks is virsh is available
+- name: Include libvirt tasks
+  include_tasks: libvirt.yaml
+  when: virsh.rc == 0
+
+# Show if a laptop, desktop, or virtual machine
+- name: Show form factor
+  debug:
+    msg: "{{ ansible_form_factor }}"
+
+- name: Show OS family
+  debug:
+    msg: "{{ ansible_os_family }}"
+
+- name: Show virtualization role
+  debug:
+    msg: "{{ ansible_virtualization_role }}"
+
+- name: Show virtualization type
+  debug:
+    msg: "{{ ansible_virtualization_type }}"
+
+- name: Show default interface
+  debug:
+    msg: "Default interface: {{ ansible_default_ipv4.interface }}"

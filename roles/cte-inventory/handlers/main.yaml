@@ -1,0 +1,16 @@
+---
+- name: Show physical interfaces
+  debug:
+    var: physical_interfaces.stdout_lines
+
+- name: Show openvswitch bridges
+  debug:
+    var: openvswitch_bridges.stdout_lines
+
+- name: Show hypervisor nodeinfo
+  debug:
+    var: hypervisor_nodeinfo.stdout_lines
+
+- name: Show hypervisor domains
+  debug:
+    var: hypervisor_domains.stdout_lines

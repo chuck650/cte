@@ -1,0 +1,9 @@
+---
+- name: Get physical interfaces names
+  command: find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n'
+  register: physical_interfaces
+  changed_when:
+    - physical_interfaces.rc == 0
+    - physical_interfaces.stdout_lines | length > 0 
+  check_mode: false
+  notify: Show physical interfaces

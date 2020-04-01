@@ -1,0 +1,12 @@
+---
+- name: Get openvswitch bridge names
+  shell: ovs-vsctl show | grep -oP '^\s+Bridge\s+\"?\K([^\s\"]+)'
+  become: yes
+  register: openvswitch_bridges
+  ignore_errors: false
+  changed_when:
+    - openvswitch_bridges.rc == 0
+    - openvswitch_bridges.stdout_lines | length > 0 
+  check_mode: false
+  notify:
+    - Show openvswitch bridges
