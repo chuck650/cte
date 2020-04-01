@@ -19,7 +19,7 @@
     - name: Get ovs-vsctl executable
       command: which ovs-vsctl
       register: ovs_vsctl_executable
-      ignore_errors: false
+      ignore_errors: true
       changed_when: false
       check_mode: false
 
@@ -27,15 +27,15 @@
       shell: ovs-vsctl show | grep -oP '^\s+Bridge\s+\"?\K([^\s\"]+)'
       become: yes
       register: openvswitch_bridges
-      ignore_errors: false
+      ignore_errors: true
       changed_when: false
       check_mode: false
-      when: ovs_vsctl_executable.stdout is defined
+      when: ovs_vsctl_executable.rc == 0
 
     - name: Get virsh executable
       command: which virsh
       register: virsh_executable
-      ignore_errors: false
+      ignore_errors: true
       changed_when: false
       check_mode: false
 
@@ -43,18 +43,19 @@
       command: virsh nodeinfo
       become: yes
       register: hypervisor_nodeinfo
-      ignore_errors: false
+      ignore_errors: true
       changed_when: false
       check_mode: false
-      when: virsh_executable.stdout is defined
+      when: virsh_executable.rc == 0
 
     - name: Get hypervisor domains
       command: virsh -q list --name --all
       become: yes
       register: hypervisor_domains
-      ignore_errors: false
+      ignore_errors: true
       changed_when: false
       check_mode: false
+      when: virsh_executable.rc == 0
 
     - name: Show form factor
       debug:
@@ -77,12 +78,14 @@
         msg: "{{ item }}"
         verbosity: 1
       loop: "{{ physical_interfaces.stdout_lines }}"
+      when: physical_interfaces.rc == 0
 
     - name: Show openvswitch bridges
       debug:
         msg: "{{ item }}"
         verbosity: 1
       loop: "{{ openvswitch_bridges.stdout_lines }}"
+      when: openvswitch_bridges.rc == 0
 
     - name: Show default interface
       debug:
@@ -93,12 +96,16 @@
       debug:
         msg: "{{ item }}"
         verbosity: 1
+      ignore_errors: true
       loop: "{{ hypervisor_nodeinfo.stdout_lines }}"
-      when: hypervisor_nodeinfo.stdout is defined
+      when:
+        - hypervisor_nodeinfo is defined
+        - hypervisor_nodeinfo.rc == 0
 
     - name: Show hypervisor_domains
       debug:
         msg: "{{ item }}"
         verbosity: 1
+      ignore_errors: true
       loop: "{{ hypervisor_domains.stdout_lines }}"
-      when: hypervisor_domains.stdout is defined
+      when: hypervisor_domains.rc == 0
