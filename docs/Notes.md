@@ -13,3 +13,10 @@ Use this command to rsync project files from host to guest for QA testing
 ```bash
 rsync -avz ~/ansible/cte/ cte:~/ansible/cte/
 ```
+
+## Things to do
+
+1. Make an lxd inventory plugin for containers
+2. Make a libvirt inventory plugin for virtual machines
+3. Make a lxc_network plugin for managing networks in lxd
+4. Make a libvirt plugin for managing libvirt networks
