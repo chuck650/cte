@@ -5,8 +5,9 @@
   tasks:
     - name: "Run tasks for class: {{ class }}"
       include_role:
-        name: cte-{{ class }}
-      when: class in classes
+        name: cte-{{ item }}
+      when: item in classes
+      loop: "{{ class.split(',')}}"
       tags:
         - cte
 
