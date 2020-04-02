@@ -2,6 +2,22 @@
 
 This HowTo will help you prepare Microsoft Windows for CTE.
 
+## Preparing Windows
+
+You'll need to get a few things done on your Windows computer to get ready for installing a virtual machine for the CTE.  If you plan to use Multipass to launch an Ubuntu VM, then also see the [cte-multipass project](https://github.com/chuck650/cte-multipass "A python script, vars file and jinja2 template to create a cloud-init user-data file for multipass") for a python script that can generate a user-data.yaml cloud-init file that Multipass can use to automate the VM build.  Using that tool will allow you to skip over most of the pre-requisite tasks below and move directly to installing and configuring  the CTE in your VM.
+
+Here are the things you'll need in order to create the VM.
+
+* *OpenSSH for Windows* to generate SSH keys
+* An *ssh key pair*, preferably and RSA and a ECDSA key pair
+* A *hypervisor*, either Hyper-V, VirtualBox or VMWare
+
+Here are the optional things you need.
+
+* *Multipass for Windows* if using Multipass to orchestrate the VM build
+* *Git for Windows* if using the cte-multipass user-data generator
+* *Python3 for Windows* if using the cte-multipass user-data generator
+
 ---
 
 ## Requirements
