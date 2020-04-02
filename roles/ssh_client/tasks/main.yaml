@@ -33,7 +33,7 @@
 #    creates: "{{ rsa_key_path }}"
 
 # Add generated RSA key to authorized_keys file
-- name: Set authorized key taken from file
+- name: Authorize RSA key for ssh login
   authorized_key:
     user: "{{ ansible_user_id }}"
     state: present
@@ -55,7 +55,7 @@
 #    creates: "{{ ecdsa_key_path }}"
 
 # Add generated ECDSA key to authorized_keys file
-- name: Set authorized key taken from file
+- name: Authorize ECDSA key for ssh login
   authorized_key:
     user: "{{ ansible_user_id }}"
     state: present

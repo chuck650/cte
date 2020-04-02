@@ -26,11 +26,20 @@
     - network.value.domain is defined
   changed_when: false
 
+- name: Check if system supports resolvectl
+  stat:
+    path: /path/to/something
+  register: resolvectl
+
 - name: Set systemd-resolve dns address
-  command:
-    cmd: resolvectl dns {{ network.value.name }} {{ network.value.gateway | ipaddr('address') }}
+  command: "{{ resolvectl.stat.executable | ternary(dns.resolvectl, dns.systemd-resolve) }}"
+    cmd:
   become: yes
   when:
     - ansible_system == "Linux"
     - network.value.gateway is defined
   changed_when: false
+  vars:
+    dns:
+      resolvectl: resolvectl dns {{ network.value.name }} {{ network.value.gateway | ipaddr('address') }}
+      systemd-resolve: systemd-resolve --set-dns={{ network.value.gateway | ipaddr('address') }} {{ network.value.name }}

@@ -24,7 +24,7 @@
   tags:
     - cte-common
 
-- name: Install some common packages for CTE use
+- name: Install common packages for CTE use
   apt:
     name: "{{ item }}"
     state: latest
@@ -41,20 +41,41 @@
   tags:
     - cte-common
 
+# Add cte-admin user
+- name: Add cte-admin user account
+  user:
+    name: cte-admin
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+    expires: -1
+    create_home: yes
+    password: $6$D.RiZA2vcbYDUDtl$zAZBdMFUsyCSna/gnx27SB6Nd4iJZcbIOH.y4AS92nrOVkbYLGSs2qRaJ0bIU9aJq167urTEtOb0w6QWl53u5/
+  become: yes
+
+- name: Set cte-admin sudoers privileges
+  copy:
+    src: cte-admin
+    dest: /etc/sudoers.d/cte-admin
+    owner: root
+    group: root
+    mode: '0440'
+  become: yes
+
+- name: Set {{ ansible_user_id }} sudoers privileges
+  template:
+    src: sudoers.j2
+    dest: /etc/sudoers.d/{{ ansible_user_id }}
+    owner: root
+    group: root
+    mode: '0440'
+  become: yes
+  vars:
+    user_name: "{{ ansible_user_id }}"
+
 #- name: Enable ipv4 forwarding for this session
 #  command: sysctl -w net.ipv4.ip_forward=1
 #  when: ansible_system == "Linux"
-
-# sysctl -p /etc/sysctl.conf
-
-#- name: Set authorized RSA key for current user
-#  authorized_key:
-#    user: "{{ ansible_user_id }}"
-#    state: present
-#    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
-#
-#- name: Set authorized ECDSA key for current user
-#  authorized_key:
-#    user: "{{ ansible_user_id }}"
-#    state: present
-#    key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_ecdsa.pub') }}"

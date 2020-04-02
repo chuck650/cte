@@ -98,9 +98,11 @@ Run the cte-config playbook and tee the output into a file for future reference.
 
 ### Initialize and setup the CTE using the CTE initialization playbook
 
+The first time this is run on a CTE system, you'll need to provide the `-K` flag to ask for the users password for sudo.  
+
 ```bash
 ~$ cd ~/ansible/cte
-~/ansible/cte$ ansible-playbook playbooks/cte-common.yaml
+~/ansible/cte$ ansible-playbook -K playbooks/cte-common.yaml
 ```
 
 ## Setting up a class

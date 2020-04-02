@@ -2,15 +2,19 @@
 - name: Show physical interfaces
   debug:
     var: physical_interfaces.stdout_lines
+  when: physical_interfaces.stdout_lines | length > 0
 
 - name: Show openvswitch bridges
   debug:
     var: openvswitch_bridges.stdout_lines
+  when: openvswitch_bridges.stdout_lines | length > 0
 
 - name: Show hypervisor nodeinfo
   debug:
     var: hypervisor_nodeinfo.stdout_lines
+  when: hypervisor_nodeinfo.stdout_lines | length > 0
 
 - name: Show hypervisor domains
   debug:
     var: hypervisor_domains.stdout_lines
+  when: hypervisor_domains.stdout_lines | length > 0
