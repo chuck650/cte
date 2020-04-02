@@ -1,4 +1,14 @@
 ---
+
+# Get exisiting lxc containers list
+- name: Get list of lxd containers
+  command: lxc list -c n --format csv
+  register: container_names
+
+- name: Show container_names
+  debug:
+    var: container_names.stdout_lines
+
 #- name: Debug container
 #  debug:
 #    msg: "{{ container | from_yaml }}"
@@ -9,10 +19,11 @@
   vars:
     container: "{{ container }}"
 
-# Build a container
+# Build a new container
 - name: "Create container: {{ container.name }}"
   lxd_container:
     name: "{{ container.name }}"
+#    state: started
     state: stopped
     devices: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
 #    config: "{{ 'user.user-data:{' +  lookup('template', 'user-data.yaml.j2') + '}' | from_yaml }}"
@@ -23,7 +34,10 @@
       protocol: simplestreams
       alias: eoan
     profiles: ["default", "cte-user"]
-  when: ansible_system == "Linux"
+  when:
+    - ansible_system == "Linux"
+    - container.name not in container_names.stdout_lines
+#  register: lxc
   vars:
     user:
       name: "{{ ansible_user_id }}"
@@ -33,14 +47,40 @@
     ssh_keys:
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
-  tags:
-    - cte-tpd
 
 - name: "Start container: {{ container.name }}"
   lxd_container:
     name: "{{ container.name }}"
     state: started
-    #wait_for_ipv4_addresses: true
-    #timeout: 60
-  tags:
-    - cte-tpd
+    wait_for_ipv4_addresses: true
+    timeout: 60
+  register: lxc
+
+- name: Register SSH host in ~/.ssh/config
+  blockinfile:
+    path: "{{ ansible_user_dir }}/.ssh/config"
+    create: yes
+    block: "{{ lookup('template', 'ssh_host.j2') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK :: {{ container.name }}"
+  vars:
+    host:
+      name: "{{ container.name }}"
+      ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
+      fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"
+
+# lxc info pub1 | awk '$1=="eth0:" && $2=="inet" {print $3}'
+
+- name: Register host in /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "^{{ container.nics[0].ipv4 | ipaddr('address') }}"
+    line: "{{ lookup('template', 'host.j2') }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  vars:
+    host:
+      name: "{{ container.name }}"
+      ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
+      fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"

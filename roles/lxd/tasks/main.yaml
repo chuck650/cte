@@ -75,7 +75,7 @@
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
 
-# TODO: Create cte profile with user.user-data, timezone, packages, etc...
+# Create cte profile with user.user-data, timezone, packages, etc...
 - name: Create a profile
   lxd_profile:
     name: cte-user
