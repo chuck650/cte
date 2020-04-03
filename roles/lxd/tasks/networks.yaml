@@ -17,15 +17,6 @@
   args:
     creates: /sys/devices/virtual/net/{{ network.value.name }}
 
-- name: Set systemd-resolve domain name
-  command:
-    cmd: resolvectl domain {{ network.value.name }} {{ network.value.domain }}
-  become: yes
-  when:
-    - ansible_system == "Linux"
-    - network.value.domain is defined
-  changed_when: false
-
 - name: Check if system supports resolvectl
   stat:
     path: /usr/bin/resolvectl
