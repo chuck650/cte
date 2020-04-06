@@ -5,19 +5,19 @@
   command: lxc list -c n --format csv
   register: container_names
 
-- name: Show container_names
-  debug:
-    var: container_names.stdout_lines
+#- name: Show container_names
+#  debug:
+#    var: container_names.stdout_lines
 
 #- name: Debug container
 #  debug:
 #    msg: "{{ container | from_yaml }}"
 
-- name: "Show {{ container.name }} nics"
-  debug:
-    msg: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
-  vars:
-    container: "{{ container }}"
+#- name: "Show {{ container.name }} nics"
+#  debug:
+#    msg: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
+#  vars:
+#    container: "{{ container }}"
 
 # Build a new container
 - name: "Create container: {{ container.name }}"
