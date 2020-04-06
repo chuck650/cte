@@ -32,10 +32,12 @@ class InventoryModule(BaseInventoryPlugin):
     def verify_file(self, path):
         '''Return true/false if this is possibly a valid file for this plugin to consume
         '''
+        #import pdb; pdb.set_trace()
         valid = False
         if super(InventoryModule, self).verify_file(path):
             #base class verifies that file exists
             #and is readable by current user
+            print(path)
             if path.endswith(('multipass.yaml',
                               'multipass.yml')):
                 valid = True
@@ -58,10 +60,16 @@ class InventoryModule(BaseInventoryPlugin):
        # Call our internal helper to populate the dynamic inventory
        self._populate()
 
-    def _get_structured_multipass_inventory(self, source):
+    def get_yaml():
+        return self._get_structured_inventory('localhost')
+
+    def _get_structured_inventory(self, source):
+        #import pdb; pdb.set_trace()
         if not os.path.isfile("/snap/bin/multipass"):
             return {}
         try:
+            # multipass list --format yaml
+            # Returns: Dictionary of key,value pairs
             process = Popen(['multipass','list', '--format','yaml'], stdout=PIPE, stderr=PIPE)
             stdout, stderr = process.communicate()
             inventory_data = yaml.safe_load(stdout)
@@ -75,20 +83,22 @@ class InventoryModule(BaseInventoryPlugin):
     def _populate(self):
         '''Return the hosts and groups'''
         self.inventory.add_group("multipass")
-        #import pdb; pdb.set_trace()
         for src in self.sources:
             src_grp = "mp_" + src
             self.inventory.add_group(src_grp)
-            mp_inventory = {}
+            inventory_data = {}
             if src is 'localhost':
                 src_ip = "127.0.0.1"
             else:
                 pass
-            mp_inventory = self._get_structured_multipass_inventory(src)
-            for vm, config in mp_inventory.items():
-                self.inventory.add_host(vm)
-                self.inventory.add_host(host=vm, group="multipass")
-                self.inventory.add_host(host=vm, group=src_grp)
-                self.inventory.set_variable(vm, 'ansible_host', config[0]['ipv4'][0])
-                self.inventory.set_variable(vm, 'state', config[0]['state'])
-                self.inventory.set_variable(vm, 'release', config[0]['release'])
+            inventory_data = self._get_structured_inventory(src)
+            #import pdb; pdb.set_trace()
+            for vm, config in inventory_data.items():
+                hostname = 'mp_' + vm
+                self.inventory.add_host(hostname)
+                self.inventory.add_host(host=hostname, group="multipass")
+                self.inventory.add_host(host=hostname, group=src_grp)
+                self.inventory.set_variable(hostname, 'ansible_host', config[0]['ipv4'][0])
+                self.inventory.set_variable(hostname, 'state', config[0]['state'])
+                self.inventory.set_variable(hostname, 'release', config[0]['release'])
+                self.inventory.set_variable(hostname, 'mp_data', config)
