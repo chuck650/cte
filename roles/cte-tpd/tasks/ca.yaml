@@ -1,0 +1,13 @@
+---
+- block:
+
+  - name: "DEBUG: Config CA"
+    debug:
+      msg: Configuring Certificate Authority
+
+  - name: "DEBUG: Show ansible_facts"
+    debug:
+      var: hostvars.lxd_netsec-ca1
+
+  when:
+    - ansible_system == "Linux"
