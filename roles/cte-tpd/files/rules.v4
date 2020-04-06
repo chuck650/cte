@@ -1,0 +1,17 @@
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [8:621]
+-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -s 10.158.102.0/24 -i ens4 -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -s 10.158.102.0/24 -i ens4 -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -s 10.158.102.0/24 -i ens4 -p tcp -m tcp --dport 3306 -j ACCEPT
+-A INPUT -i ens4 -j DROP
+-A OUTPUT -o ens4 -m conntrack --ctstate ESTABLISHED -j ACCEPT
+-A OUTPUT -o lo -j ACCEPT
+-A OUTPUT -o ens4 -p udp -m udp --dport 123 -j ACCEPT
+-A OUTPUT ! -d 10.158.102.0/24 -o ens4 -j LOG --log-prefix "Network departure attempted: "
+-A OUTPUT -d 91.189.88.0/21 -p tcp -m multiport --dports 80,443 -m comment --comment "canonical.com,snapcraft.io" -j ACCEPT
+-A OUTPUT ! -d 10.158.102.0/24 -o ens4 -j DROP
+COMMIT

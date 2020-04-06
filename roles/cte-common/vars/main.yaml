@@ -12,4 +12,5 @@ apt:
     - vim
     - vim-airline
     - python
+    - python-netaddr
     - nmap

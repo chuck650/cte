@@ -23,8 +23,9 @@
   loop_control:
     loop_var: container
 
-- name: Configure Certificate Authority
-  include_tasks: ca.yaml
-  tags:
-    - never
-    - ca
+#- name: Show pub1 iptables rules
+#  debug:
+##    var: container
+#    msg: "{{ lookup('template', 'pub1.rules.v4.j2') }}"
+#  vars:
+#    container: "{{ cte.tpd.containers[0] }}"

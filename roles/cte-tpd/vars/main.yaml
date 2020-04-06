@@ -24,3 +24,4 @@ cte:
         nics:
           - parent: *pub
             ipv4: '10.220.223.51/24'
+            name: eth0
