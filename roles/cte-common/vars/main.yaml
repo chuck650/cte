@@ -12,3 +12,4 @@ apt:
     - vim
     - vim-airline
     - python
+    - nmap
