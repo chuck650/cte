@@ -12,8 +12,14 @@
     cmd: |
       lxc network create {{ network.value.name }}
       {{ lookup('template', 'network_options.j2') }}
+  register: lxc_network
   become: yes
   when: ansible_system == "Linux"
+  changed_when:
+    - lxc_network.rc == 0
+  failed_when:
+    - lxc_network.rc > 0
+    - 'not "The network already exists" in lxc_network.stderr'
   args:
     creates: /sys/devices/virtual/net/{{ network.value.name }}
 
@@ -22,6 +28,21 @@
     path: /usr/bin/resolvectl2
   register: resolvectl
   failed_when: false
+
+#- name: Wait a few seconds
+#  pause:
+#    seconds: 10
+
+- name: Wait for dns to listen on network
+  wait_for:
+    host: "{{ network.value.address | ipaddr('address') }}"
+    port: 53
+    delay: 5
+    timeout: 60
+    state: started
+  when:
+    - network.value.address is defined
+    - network.value.address | ipaddr
 
 - name: Set systemd-resolve dns address
   command:
