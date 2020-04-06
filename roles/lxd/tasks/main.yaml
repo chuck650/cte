@@ -46,9 +46,9 @@
   notify: Initialize LXD
   when: ansible_system == "Linux"
 
-- name: Show lxd storage pool location
-  debug:
-    msg: "{{ lxd_storage.stdout }}"
+#- name: Show lxd storage pool location
+#  debug:
+#    msg: "{{ lxd_storage.stdout }}"
 
 - name: Check ZFS Pool
   command: zpool list -Ho health default
