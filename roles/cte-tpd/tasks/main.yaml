@@ -22,3 +22,9 @@
   loop: "{{ cte.tpd.containers }}"
   loop_control:
     loop_var: container
+
+- name: Configure Certificate Authority
+  include_tasks: ca.yaml
+  tags:
+    - never
+    - ca
