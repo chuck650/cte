@@ -1,5 +1,5 @@
 Host {{ host.name }}
     HostName {{ host.ipv4 }}
-    User chuck
+    User {{ ansible_user_id }}
     IdentityFile ~/.ssh/id_ecdsa
     IdentitiesOnly yes
