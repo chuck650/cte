@@ -21,6 +21,20 @@
   vars:
     container: "{{ container }}"
 
+#- name: Show manual build alternative
+#  debug:
+#    msg: "lxc init ubuntu:{{ansible_distribution_release}} {{ container.name }} -p default -p cte-user << EOF \n{{lookup('template', 'nic_devices.yaml.j2') | from_yaml}}\nEOF"
+#    verbosity: 2
+#  vars:
+#    user:
+#      name: "{{ ansible_user_id }}"
+#      password: "{{ cte_user_password | default('password') }}"
+#      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+#    container: "{{ container }}"
+#    ssh_keys:
+#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
+
 # Build a new container
 - name: "Create container: {{ container.name }}"
   lxd_container:
@@ -34,7 +48,7 @@
       mode: pull
       server: https://cloud-images.ubuntu.com/releases
       protocol: simplestreams
-      alias: eoan
+      alias: "{{ansible_distribution_release}}"
     profiles: ["default", "cte-user"]
   when:
     - ansible_system == "Linux"
