@@ -46,6 +46,9 @@
   notify: Initialize LXD
   when: ansible_system == "Linux"
 
+- name: Force notified lxd handlers
+  meta: flush_handlers
+
 #- name: Show lxd storage pool location
 #  debug:
 #    msg: "{{ lxd_storage.stdout }}"
@@ -63,17 +66,18 @@
     - ansible_system == "Linux"
     - lxd_storage.rc == 0
 
-#- name: Create a profile
-#  debug:
-#    msg: "{{ lookup('template', 'user-data.yaml.j2') | from_yaml }}"
-#  vars:
-#    user:
-#      name: "{{ ansible_user_id }}"
-#      password: "{{ cte_user_password | default('password') }}"
-#      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
-#    ssh_keys:
-#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
-#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
+- name: Create a profile
+  debug:
+    msg: "{{ lookup('template', 'user-data.yaml.j2') | from_yaml }}"
+    verbosity: 2
+  vars:
+    user:
+      name: "{{ ansible_user_id }}"
+      password: "{{ cte_user_password | default('password') }}"
+      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
+    ssh_keys:
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
+      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
 
 # Create cte profile with user.user-data, timezone, packages, etc...
 - name: Create a profile
