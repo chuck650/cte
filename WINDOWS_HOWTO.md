@@ -70,5 +70,5 @@ For example, to configure Multipass to use the VirtualBox hypervisor and launch 
 
 ```cmd
 C:\WINDOWS\system32> multipass set local.driver=virtualbox
-C:\WINDOWS\system32> multipass launch --n cte -d 40G -m 12G eoan
+C:\WINDOWS\system32> multipass launch -c 2 -n cte -d 40G -m 8G eoan
 ```
