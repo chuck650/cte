@@ -9,15 +9,17 @@
 #  debug:
 #    var: container_names.stdout_lines
 
-#- name: Debug container
-#  debug:
-#    msg: "{{ container | from_yaml }}"
+- name: Debug container
+  debug:
+    msg: "{{ container | from_yaml }}"
+    verbosity: 2
 
-#- name: "Show {{ container.name }} nics"
-#  debug:
-#    msg: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
-#  vars:
-#    container: "{{ container }}"
+- name: "Show {{ container.name }} devices"
+  debug:
+    msg: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
+    verbosity: 2
+  vars:
+    container: "{{ container }}"
 
 # Build a new container
 - name: "Create container: {{ container.name }}"
@@ -55,6 +57,26 @@
     wait_for_ipv4_addresses: true
     timeout: 60
   register: lxc
+
+#- name: Configure known_hosts
+#  # TODO: check always to keep known_hosts keys in sync
+#  block:
+#  - name: Check if container is a known host
+#    command:
+#      cmd: "ssh-keygen -F '{{ container.nics[0].ipv4 | ipaddr('address') }}'"
+#    #stat:
+#    #  path: "/home/{{ ansible_user_id }}/.ssh/known_hosts"
+#    register: known_hosts
+#
+#    # TODO: Clear keys from known_hosts only if old
+#  - name: Clear container from known hosts
+#    command:
+#      cmd: "ssh-keygen -f '/home/{{ ansible_user_id }}/.ssh/known_hosts' -R '{{ container.nics[0].ipv4 | ipaddr('address') }}'"
+#    when: 'known_hosts.rc == 0'
+#    #when: known_hosts.stat.exists
+#
+#    # TODO: Add keys to known_hosts only if new
+#  when: container.name not in container_names.stdout_lines
 
 - name: Register SSH host in ~/.ssh/config
   blockinfile:
