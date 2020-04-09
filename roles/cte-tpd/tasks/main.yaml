@@ -23,6 +23,18 @@
   loop_control:
     loop_var: container
 
+# Enable NAT on upstream network from PIA network via ansible_default_ipv4.interface
+- name: Enable NAT on upsteam network
+  iptables:
+    chain: POSTROUTING
+    table: nat
+    source: "{{cte.tpd.networks.public.net}}"
+    out_interface: "{{ansible_default_ipv4.interface}}"
+    jump: MASQUERADE
+    comment: "{{cte.tpd.networks.public.name}}"
+  become: yes
+  when: ansible_system == 'Linux'
+
 #- name: Show pub1 iptables rules
 #  debug:
 ##    var: container
