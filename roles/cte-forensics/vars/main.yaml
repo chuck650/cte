@@ -1,8 +1,8 @@
 cte:
-  netsec:
+  forensics:
     networks:
       public: &pub
-        name: 'cte-netsec'
+        name: 'cte-forensics'
         net: '10.80.63.0/24'
         gateway: '10.80.63.1'
         address: '10.80.63.1/24'
