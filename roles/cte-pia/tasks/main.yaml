@@ -23,8 +23,8 @@
   loop_control:
     loop_var: container
 
-# Enable upstream network access from the PIA network via CTE Gateway
-- name: Allow network access
+# Enable NAT on upstream network from PIA network via ansible_default_ipv4.interface
+- name: Enable NAT on upsteam network
   iptables:
     chain: POSTROUTING
     table: nat
