@@ -1,7 +1,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 from subprocess import Popen, PIPE
-import yaml, os, operator
+import yaml, os
 
 DOCUMENTATION = r'''
     name: lxd
@@ -76,11 +76,17 @@ class InventoryModule(BaseInventoryPlugin):
         except FileNotFoundError as e:
             return {}
 
-    def _get_item(self, element, data):
+    def _get_cte_config(self, data):
+        #Recurse down the element path until value found or key not found
+        # path = "config/user.cte"
         try:
-            return reduce(operator.getitem, element.split('/'), data)
+            #import pdb; pdb.set_trace()
+            cte_config = data['config']['user.cte']
+            if isinstance(cte_config, str):
+                cte_config = yaml.safe_load(cte_config)
+            return cte_config
         except:
-            return None
+            return {}
 
     def _populate(self):
         '''Return the hosts and groups'''
@@ -94,17 +100,30 @@ class InventoryModule(BaseInventoryPlugin):
             else:
                 pass
             inventory_data = self._get_structured_inventory(src)
-            #import pdb; pdb.set_trace()
-            for item in inventory_data:
-                hostname = 'lxd_' + item['name']
+            for host_data in inventory_data:
+                hostname = 'lxd_' + host_data['name']
                 self.inventory.add_host(hostname)
                 self.inventory.add_host(host=hostname, group="lxd")
                 self.inventory.add_host(host=hostname, group=src_grp)
+                cte_config = self._get_cte_config(host_data)
+                if "groups" in cte_config.keys():
+                    cte_groups = cte_config['groups']
+                    #import pdb; pdb.set_trace()
+                    for group in cte_groups:
+                        try:
+                            self.inventory.add_group(group)
+                        except Exception as e:
+                            pass
+                        self.inventory.add_host(host=hostname, group=group)
+                #if "course" in cte_config.keys():
+                #    cte_course = cte_config['course']
+                #        self.inventory.add_host(host=hostname, group=cte_course)
                 try:
-                    self.inventory.set_variable(hostname, 'ansible_host', self._get_item('devices/eth0/ipv4.address',item))
-                    self.inventory.set_variable(hostname, 'state', item['status'])
-                    self.inventory.set_variable(hostname, 'release', item['config']['image.release'])
-                    self.inventory.set_variable(hostname, 'lxd_data', item)
+                    #import pdb; pdb.set_trace()
+                    self.inventory.set_variable(hostname, 'ansible_host', host_data['devices']['eth0']['ipv4.address'])
+                    self.inventory.set_variable(hostname, 'state', host_data['status'])
+                    self.inventory.set_variable(hostname, 'release', host_data['config']['image.release'])
+                    self.inventory.set_variable(hostname, 'lxd_data', host_data)
                 except Exception as e:
                     continue
             #print('Inventory count: ', len(inventory_data))
