@@ -1,0 +1,26 @@
+- name: Applying nginx-server role
+  debug:
+    msg: running nginx-server role
+
+- name: Install Prerequisites
+  apt:
+    name: aptitude
+    state: latest
+  become: yes
+
+- name: Install nginx
+  apt:
+    name: "{{ item }}"
+    state: latest
+  become: yes
+  loop:
+    - nginx
+    - python3-pymysql
+    - php-fpm
+    - php-mysql
+
+- name: Sets Up PHP Info Page
+  template:
+    src: "info.php.j2"
+    dest: "/var/www/html/info.php"
+  become: yes
