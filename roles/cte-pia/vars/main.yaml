@@ -14,6 +14,16 @@ cte:
         nics:
           - parent: *pub
             ipv4: '10.120.113.51/24'
+        apt_repositories:
+          - repo: "deb [arch=amd64] https://pkg.osquery.io/deb deb main"
+            filename: osquery
+            key:
+              keyserver: "keyserver.ubuntu.com"
+              id: 1484120AC4E9F8A1A577AEEE97A80C63C9D8B80B
+        packages:
+          - cifs-utils
+          - bzip2
+          - osquery
 #      - name: pia2
 #        course: pia
 #        groups: [cte,pia]

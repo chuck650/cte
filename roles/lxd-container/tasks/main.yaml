@@ -19,7 +19,7 @@
 
   - name: Install common packages
     apt:
-      name: "{{item}}"
+      name: "{{ package }}"
       state: latest
     become: yes
     loop:
@@ -28,5 +28,22 @@
       - python3
       - tmux
       - nmap
+      - curl
+      - htop
+      - mutt
+      - tcpdump
+      - tree
+      - tshark
+      - python-jmespath
+      - python-netaddr
+      - python3-jinja2
+      - python3-jmespath
+      - python3-netaddr
+      - xxd
+    loop_control:
+      loop_var: package
+
+  - name: Install common packages
+    include_tasks: configure.yaml
 
   delegate_to: "{{ container.name | default(ansible_host) }}"

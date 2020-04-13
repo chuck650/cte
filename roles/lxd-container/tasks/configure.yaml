@@ -1,0 +1,53 @@
+---
+- meta: refresh_inventory
+
+- block:
+
+  - name: Show keys to add
+    debug:
+      var: keys
+      verbosity: 1
+    vars:
+      keys: "{{ container.apt_repositories | map(attribute='key') | list }}"
+
+  # Keys must be added before repositories so the cache can auto update
+  - name: Configure repository keys
+    apt_key:
+      keyserver: "{{ key.keyserver }}"
+      id: "{{ key.id }}"
+      state: present
+    become: yes
+    loop: "{{ container.apt_repositories | map(attribute='key') | list }}"
+    loop_control:
+      loop_var: key
+
+  - name: Show repositories to add
+    debug:
+      var: container.apt_repositories
+      verbosity: 1
+
+  - name: Configure additional repositories
+    apt_repository:
+      repo: "{{ repository.repo }}"
+      state: present
+      filename: "{{ repository.filename }}"
+    become: yes
+    loop: "{{ container.apt_repositories }}"
+    loop_control:
+      loop_var: repository
+
+  - name: Show packages to be installed
+    debug:
+      var: container.packages
+      verbosity: 1
+
+  - name: Install container specific packages
+    apt:
+      name: "{{ package }}"
+      state: latest
+    become: yes
+    loop: "{{ container.packages }}"
+    loop_control:
+      loop_var: package
+
+  delegate_to: "{{ container.name | default(ansible_host) }}"

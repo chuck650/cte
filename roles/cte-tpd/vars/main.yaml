@@ -23,6 +23,8 @@ cte:
       - name: pub1
         course: tpd
         groups: [cte,tpd]
+        packages:
+          - iptables-persistent
         nics:
           - parent: *pub
             ipv4: '10.220.223.51/24'
