@@ -13,16 +13,6 @@
   loop_control:
     loop_var: network
 
-
-# loop over the containers and create each one with config vars
-- name: Create containers
-  include_role:
-    name: lxd
-    tasks_from: containers.yaml
-  loop: "{{ cte.tpd.containers }}"
-  loop_control:
-    loop_var: container
-
 # Enable NAT on upstream network from PIA network via ansible_default_ipv4.interface
 - name: Enable NAT on upsteam network
   iptables:
@@ -34,6 +24,15 @@
     comment: "{{cte.tpd.networks.public.name}}"
   become: yes
   when: ansible_system == 'Linux'
+
+# loop over the containers and create each one with config vars
+- name: Create containers
+  include_role:
+    name: lxd
+    tasks_from: containers.yaml
+  loop: "{{ cte.tpd.containers }}"
+  loop_control:
+    loop_var: container
 
 #- name: Show pub1 iptables rules
 #  debug:
