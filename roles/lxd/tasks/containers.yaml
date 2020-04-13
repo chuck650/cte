@@ -1,13 +1,14 @@
 ---
 
-# Get exisiting lxc containers list
+# Get existing lxc containers list
 - name: Get list of lxd containers
   command: lxc list -c n --format csv
   register: container_names
 
-#- name: Show container_names
-#  debug:
-#    var: container_names.stdout_lines
+- name: Show container_names
+  debug:
+    var: container_names.stdout_lines
+    verbosity: 2
 
 - name: Debug container
   debug:
@@ -21,19 +22,8 @@
   vars:
     container: "{{ container }}"
 
-#- name: Show manual build alternative
-#  debug:
-#    msg: "lxc init ubuntu:{{ansible_distribution_release}} {{ container.name }} -p default -p cte-user << EOF \n{{lookup('template', 'nic_devices.yaml.j2') | from_yaml}}\nEOF"
-#    verbosity: 2
-#  vars:
-#    user:
-#      name: "{{ ansible_user_id }}"
-#      password: "{{ cte_user_password | default('password') }}"
-#      gecos: "{{ ansible_user_gecos.split(',')[0] }}"
-#    container: "{{ container }}"
-#    ssh_keys:
-#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
-#      - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
+# Note: Manual build alternative
+# lxc init ubuntu:{{ansible_distribution_release}} {{ container.name }} -p default -p cte-user << EOF \n{{lookup('template', 'nic_devices.yaml.j2') | from_yaml}}\nEOF
 
 # Build a new container
 - name: "Create container: {{ container.name }}"
@@ -41,6 +31,7 @@
     name: "{{ container.name }}"
 #    state: started
     state: stopped
+    config: { 'user.cte':"{'course':{{container.course|default('cte')|to_json}},'groups':{{container.groups|default([])|to_json}}}"}
     devices: "{{ lookup('template', 'nic_devices.yaml.j2') | from_yaml }}"
 #    config: "{{ 'user.user-data:{' +  lookup('template', 'user-data.yaml.j2') + '}' | from_yaml }}"
     source:
@@ -53,7 +44,6 @@
   when:
     - ansible_system == "Linux"
     - container.name not in container_names.stdout_lines
-#  register: lxc
   vars:
     user:
       name: "{{ ansible_user_id }}"
@@ -64,13 +54,42 @@
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_rsa.pub') }}"
       - "{{ lookup('file', ansible_user_dir + '/.ssh/id_ecdsa.pub') }}"
 
+- name: Read container user.cte config value
+  command:
+    cmd: "lxc config get {{container.name}} user.cte"
+  register: get_cte_config
+  changed_when: false
+  become: yes
+
+- name: "Show container cte_config"
+  debug:
+    msg: "{{ get_cte_config.stdout | from_yaml }}"
+    verbosity: 1
+  become: yes
+
+- name: "Show container.group"
+  debug:
+    var: container.groups
+    verbosity: 1
+
+- name: Set user.cte container config variable
+  command:
+    cmd: "lxc config set {{container.name}} user.cte {{cte_config|to_json}}"
+  become: yes
+  vars:
+    cte_config: "{'course':{{container.course|default('cte')|to_json}},'groups':{{container.groups|default([])|to_json}}}"
+  when:
+    - get_cte_config.stdout == "" or
+      "course:" not in get_cte_config.stdout or
+      "groups:" not in get_cte_config.stdout
+
 - name: "Start container: {{ container.name }}"
   lxd_container:
     name: "{{ container.name }}"
     state: started
     wait_for_ipv4_addresses: true
     timeout: 60
-  register: lxc
+  register: start_container
 
 #- name: Configure known_hosts
 #  # TODO: check always to keep known_hosts keys in sync
@@ -120,3 +139,13 @@
       name: "{{ container.name }}"
       ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
       fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"
+
+- name: show lxc return variables
+  debug:
+    var: start_container
+    verbosity: 1
+
+- name: Include nginx-server role
+  include_role:
+    name: lxd-container
+  when: start_container is succeeded
