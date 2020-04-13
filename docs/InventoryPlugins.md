@@ -33,9 +33,11 @@ The returned yaml data consists of a dictionary using the VM names as keys, and 
 
 ## LXD
 
-Lxd is a daemon that manages infrastructure containers.  Infrastructure containers run a namespaced OS over a shared kernel providing a complete virtualized OS space as opposed to application containers such as Docker containers.
+LXD is a daemon that manages infrastructure containers.  Infrastructure containers run a namespaced OS over a shared kernel providing a complete virtualized OS space as opposed to application containers such as Docker containers.
 
-Since lxd containers share the kernel from the host, they run with low system resource requirements and are very suitable for limiting the amount of system resources required by the CTE when running many OS instances across a virtualized network infrastructure.
+Since LXD containers share the kernel from the host, they run with low system resource requirements and are very suitable for limiting the amount of system resources required by the CTE when running many OS instances across a virtualized network infrastructure.
+
+LXD containers appear in Ansible inventory with `lxd_` prepended to their container names.  This allows the names to be unique within ansible inventory, while allowing name duplication outside of the LXD container name namespace on the localhost LXD daemon.
 
 The lxd inventory plugin uses the following command to extract data from the host in yaml format as shown in the following example.
 
