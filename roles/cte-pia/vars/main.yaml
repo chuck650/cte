@@ -9,6 +9,14 @@ cte:
         domain: pia.cte
     containers:
       - name: pia1
+        course: pia
+        groups: [cte,pia]
         nics:
           - parent: *pub
             ipv4: '10.120.113.51/24'
+#      - name: pia2
+#        course: pia
+#        groups: [cte,pia]
+#        nics:
+#          - parent: *pub
+#            ipv4: '10.120.113.52/24'

@@ -9,6 +9,8 @@ cte:
         domain: forensics.cte
     containers:
       - name: for1
+        course: forensics
+        groups: [cte,forensics]
         nics:
           - parent: *pub
             ipv4: '10.80.63.51/24'

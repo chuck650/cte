@@ -21,6 +21,8 @@ cte:
   #      namespace: 'cte-tpd-pri'
     containers:
       - name: pub1
+        course: tpd
+        groups: [cte,tpd]
         nics:
           - parent: *pub
             ipv4: '10.220.223.51/24'

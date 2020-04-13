@@ -9,6 +9,8 @@ cte:
         domain: netsec.cte
     containers:
       - name: netsec-ca1
+        course: netsec
+        groups: [cte,netsec]
         nics:
           - parent: *pub
             ipv4: '10.240.243.51/24'
