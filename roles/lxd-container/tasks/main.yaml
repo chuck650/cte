@@ -1,0 +1,32 @@
+---
+- meta: refresh_inventory
+
+- block:
+
+  - name: Install Prerequisites
+    apt:
+      name: aptitude
+      update_cache: yes
+      state: latest
+    become: yes
+
+  - name: Upgrade installed packages
+    apt:
+      upgrade: full
+      autoclean: yes
+      autoremove: yes
+    become: yes
+
+  - name: Install common packages
+    apt:
+      name: "{{item}}"
+      state: latest
+    become: yes
+    loop:
+      - vim
+      - vim-airline
+      - python3
+      - tmux
+      - nmap
+
+  delegate_to: "{{ container.name | default(ansible_host) }}"
