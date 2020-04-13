@@ -6,3 +6,32 @@
    - cte-tpd
   vars_files:
     - vars/cte-common.yaml
+
+# Ensures tasks are isolated to containers in the tpd group
+- hosts: tpd
+  tasks:
+
+    - name: "Show lxd config cte data"
+      debug:
+        msg: "{{cte_config.groups}}"
+        verbosity: 1
+#      vars:
+#        cte_config: "{{lxd_data['config']['user.cte']|from_yaml}}"
+
+    - name: "Fail if host is not a member of the tpd group"
+      fail:
+        msg: Host is {{ ('tpd' in cte_config.groups) | ternary('a member','not a member') }} of the `tpd` group
+      when: "'tpd' not in cte_config.groups"
+#      vars:
+#        cte_config: "{{lxd_data['config']['user.cte']|from_yaml}}"
+
+    # Using include_role vs. roles: allows use of when condition to only run role
+    # for containers in the tpd group
+    - name: Include nginx-server role
+      include_role:
+        name: nginx-server
+      when: "'tpd' in cte_config.groups"
+
+  vars:
+    cte_config: "{{lxd_data['config']['user.cte']|from_yaml}}"
+  tags: [ never, nginx ]
