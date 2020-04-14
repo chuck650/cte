@@ -11,6 +11,9 @@ cte:
       - name: netsec-ca1
         course: netsec
         groups: [cte,netsec]
+        packages:
+          - ansible
+          - python3-distutils
         nics:
           - parent: *pub
             ipv4: '10.240.243.51/24'
