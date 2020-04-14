@@ -20,6 +20,9 @@
     loop: "{{ container.apt_repositories | map(attribute='key') | list }}"
     loop_control:
       loop_var: key
+    when:
+      - container.apt_repositories is defined
+      - container.apt_repositories.key is defined
 
   - name: Show repositories to add
     debug:
@@ -35,6 +38,10 @@
     loop: "{{ container.apt_repositories }}"
     loop_control:
       loop_var: repository
+    when:
+      - container.apt_repositories is defined
+      - container.apt_repositories.repo is defined
+      - container.apt_repositories.filename is defined
 
   - name: Show packages to be installed
     debug:
