@@ -39,7 +39,7 @@ Generate RSA and ECDA ssh keys and add the public keys to the authorized keys fi
 ```bash
 ~$ ssh-keygen -t rsa -b 2048
 ~$ ssh-keygen -t ecdsa -b 521
-~$ cat .ssh/id_{ecd,r}sa.pub >> .ssh/authorized_keys
+~$ cat ~/.ssh/id_{ecd,r}sa.pub >> ~/.ssh/authorized_keys
 ```
 
 > If you are going to use ssh to connect to this VM from outside the CTE, also copy any other public keys necessary to the `~/.ssh/authorized_keys` file.
