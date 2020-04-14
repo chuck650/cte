@@ -14,7 +14,21 @@ cte:
         nics:
           - parent: *pub
             ipv4: '10.240.243.51/24'
-#      - name: netsec-ca2
+      - name: netsec-www
+        course: netsec
+        groups: [cte,netsec]
+        nics:
+          - parent: *pub
+            ipv4: '10.240.243.52/24'
+#      - name: netsec-db
+#        course: netsec
+#        groups: [cte,netsec]
 #        nics:
 #          - parent: *pub
-#            ipv4: '10.240.243.52/24'
+#            ipv4: '10.240.243.53/24'
+#      - name: netsec-mq
+#        course: netsec
+#        groups: [cte,netsec]
+#        nics:
+#          - parent: *pub
+#            ipv4: '10.240.243.54/24'
