@@ -24,9 +24,9 @@ cte:
           - cifs-utils
           - bzip2
           - osquery
-#      - name: pia2
-#        course: pia
-#        groups: [cte,pia]
-#        nics:
-#          - parent: *pub
-#            ipv4: '10.120.113.52/24'
+      - name: pia2
+        course: pia
+        groups: [cte,pia]
+        nics:
+          - parent: *pub
+            ipv4: '10.120.113.52/24'
