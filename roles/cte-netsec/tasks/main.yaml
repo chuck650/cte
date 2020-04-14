@@ -13,6 +13,17 @@
   loop_control:
     loop_var: network
 
+# Enable NAT on upstream network from PIA network via ansible_default_ipv4.interface
+- name: Enable NAT on upsteam network
+  iptables:
+    chain: POSTROUTING
+    table: nat
+    source: "{{cte.netsec.networks.public.net}}"
+    out_interface: "{{ansible_default_ipv4.interface}}"
+    jump: MASQUERADE
+    comment: "{{cte.netsec.networks.public.name}}"
+  become: yes
+  when: ansible_system == 'Linux'
 
 # loop over the containers and create each one with config vars
 - name: Create containers

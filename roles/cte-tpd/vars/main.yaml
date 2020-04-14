@@ -29,3 +29,30 @@ cte:
           - parent: *pub
             ipv4: '10.220.223.51/24'
             name: eth0
+      - name: tpd-www1
+        course: tpd
+        groups: [cte,tpd]
+        packages:
+          - iptables-persistent
+        nics:
+          - parent: *pub
+            ipv4: '10.220.223.52/24'
+            name: eth0
+      - name: tpd-db1
+        course: tpd
+        groups: [cte,tpd]
+        packages:
+          - iptables-persistent
+        nics:
+          - parent: *pub
+            ipv4: '10.220.223.53/24'
+            name: eth0
+      - name: tpd-mq1
+        course: tpd
+        groups: [cte,tpd]
+        packages:
+          - iptables-persistent
+        nics:
+          - parent: *pub
+            ipv4: '10.220.223.54/24'
+            name: eth0
