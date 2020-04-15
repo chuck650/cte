@@ -19,7 +19,7 @@ cte:
             ipv4: '10.240.243.51/24'
       - name: netsec-www
         course: netsec
-        groups: [cte,netsec]
+        groups: [cte,netsec,webservers]
         nics:
           - parent: *pub
             ipv4: '10.240.243.52/24'

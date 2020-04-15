@@ -31,7 +31,7 @@ cte:
             name: eth0
       - name: tpd-www1
         course: tpd
-        groups: [cte,tpd]
+        groups: [cte,tpd,webservers]
         packages:
           - iptables-persistent
         nics:
@@ -40,7 +40,7 @@ cte:
             name: eth0
       - name: tpd-db1
         course: tpd
-        groups: [cte,tpd]
+        groups: [cte,tpd,dbservers]
         packages:
           - iptables-persistent
         nics:
@@ -49,7 +49,7 @@ cte:
             name: eth0
       - name: tpd-mq1
         course: tpd
-        groups: [cte,tpd]
+        groups: [cte,tpd,msgqueues]
         packages:
           - iptables-persistent
         nics:
