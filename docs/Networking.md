@@ -6,9 +6,11 @@ This guide explains some of the networking features of the CTE and how to manage
 
 The CTE relies on a combination of OpenvSwitch bridges and LXD infrastructure containers to provide a robust networking environment.  The OpenvSwitch bridges are usually managed by the LXD daemon, or are created directly in the OVS system.  Bridges can exist in the default network namespace, or in another network namespace to provide isolation and advanced routing functionality.
 
+![CTE Network Diagram](./svg/CTE_Network.svg)
+
 ## Getting network information
 
-You can use a variety of Linux utilities as well as the `lxc` and `ovs-vsctl` utilities to get access to network information.  Below are some of the common tasks for networking in the CTE.
+You can use a variety of Linux utilities such is `ip`, `hostnamectl`, `ss`, and `nmap`, as well as the `lxc` and `ovs-vsctl` utilities to get access to network information.  Below are some of the common tasks for networking in the CTE.
 
 ### Task examples
 
