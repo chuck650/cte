@@ -7,12 +7,12 @@
     apt:
       name: aptitude
       update_cache: yes
-      state: latest
     become: yes
     retries: 3
     delay: 3
     register: result
-    until: result.rc == 0
+    until: result is succeeded
+    ignore_errors: yes
 
   - name: Upgrade installed packages
     apt:
@@ -54,4 +54,4 @@
 
   rescue:
     - debug:
-      msg: 'There was a problem configuring {{ container.name | default(ansible_host) }}.  Please fix and try again.'
+        msg: 'There was a problem configuring {{ container.name | default(ansible_host) }}.  Please fix and try again.'
