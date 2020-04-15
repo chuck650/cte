@@ -27,9 +27,10 @@ IDX LINK             TYPE               OPERATIONAL      SETUP
 
 ---
 
-Displaying DNS resolution settings on an interface with `resolvectl status`
+Displaying DNS resolution settings on interface ens4 with `resolvectl status` (Ubuntu 18.10 or higher) or `systemd-resolve` (Ubuntu 18.04).
 
 ```bash
+$ systemd-resolve --status ens4
 $ resolvectl status ens4
 Link 2 (ens4)
       Current Scopes: DNS

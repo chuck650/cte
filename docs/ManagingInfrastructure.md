@@ -84,6 +84,8 @@ A service is a configured set of software on a host that provides services to th
 
 ### Provision a single web server service
 
+First verify the hosts that can be operated on by a playbook by using the `--list-hosts` option on the playbook.  Select a valid host inventory name, then run the playbook using the `--limit=` option, specifying the inventory name after the equals sign.
+
 ```bash
 ~/ansible/cte$ ansible-playbook playbooks/cte-webservers.yaml --list-hosts
 /home/chuck/ansible/cte/inventory/inventory.yaml
