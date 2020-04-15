@@ -140,6 +140,13 @@
       ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
       fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"
 
+# NOTE: From /etc/hosts on cloud-init managed systems:
+# Your system has configured 'manage_etc_hosts' as True.
+# As a result, if you wish for changes to this file to persist
+# then you will need to either
+# a.) make changes to the master file in /etc/cloud/templates/hosts.debian.tmpl
+# b.) change or remove the value of 'manage_etc_hosts' in
+#     /etc/cloud/cloud.cfg or cloud-config from user-data
 - name: Check for managed /etc/hosts
   stat:
     path: /etc/cloud/templates/hosts.debian.tmpl
