@@ -9,6 +9,10 @@
       update_cache: yes
       state: latest
     become: yes
+    retries: 3
+    delay: 3
+    register: result
+    until: result.rc == 0
 
   - name: Upgrade installed packages
     apt:
@@ -47,3 +51,7 @@
     include_tasks: configure.yaml
 
   delegate_to: "{{ container.name | default(ansible_host) }}"
+
+rescue:
+  - debug:
+    msg: 'There was a problem configuring {{ container.name | default(ansible_host) }}.  Please fix and try again.'
