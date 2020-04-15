@@ -140,6 +140,28 @@
       ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
       fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"
 
+- name: Check for managed /etc/hosts
+  stat:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+  register: manage_etc_hosts
+
+# /etc/cloud/templates/hosts.debian.tmpl
+- name: Register host in /etc/cloud/templates/hosts.debian.tmpl
+  lineinfile:
+    path: /etc/cloud/templates/hosts.debian.tmpl
+    regexp: "^{{ container.nics[0].ipv4 | ipaddr('address') }}"
+    line: "{{ lookup('template', 'host.j2') }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+  when: manage_etc_hosts.stat.exists
+  vars:
+    host:
+      name: "{{ container.name }}"
+      ipv4: "{{ container.nics[0].ipv4 | ipaddr('address') }}"
+      fqdn: "{{ container.name }}.{{ container.nics[0].parent.domain }}"
+
 - name: show lxc return variables
   debug:
     var: start_container
