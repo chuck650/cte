@@ -7,6 +7,9 @@
     debug:
       var: keys
       verbosity: 1
+    when:
+      - container.apt_repositories is defined
+      - container.apt_repositories.key is defined
     vars:
       keys: "{{ container.apt_repositories | map(attribute='key') | list }}"
 
