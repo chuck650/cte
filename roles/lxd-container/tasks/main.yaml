@@ -52,6 +52,6 @@
 
   delegate_to: "{{ container.name | default(ansible_host) }}"
 
-rescue:
-  - debug:
-    msg: 'There was a problem configuring {{ container.name | default(ansible_host) }}.  Please fix and try again.'
+  rescue:
+    - debug:
+      msg: 'There was a problem configuring {{ container.name | default(ansible_host) }}.  Please fix and try again.'
