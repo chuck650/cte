@@ -24,3 +24,9 @@
     src: "info.php.j2"
     dest: "/var/www/html/info.php"
   become: yes
+
+- name: Sets Up index.html Page
+  template:
+    src: "index.html.j2"
+    dest: "/var/www/html/index.html"
+  become: yes
