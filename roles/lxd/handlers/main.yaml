@@ -33,3 +33,8 @@
     creates: /var/snap/lxd/common/lxd/disks/default.img
   when: ansible_system == "Linux"
 # After creating a new pool, probably need to restart the two snap.lxd services
+
+- name: Persist iptables rules
+  command: iptables-save --file /etc/iptables/rules.v4
+  become: yes
+  when: ansible_system == "Linux"

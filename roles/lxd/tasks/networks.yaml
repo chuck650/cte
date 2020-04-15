@@ -20,8 +20,24 @@
   failed_when:
     - lxc_network.rc > 0
     - 'not "The network already exists" in lxc_network.stderr'
+  notify: Persist iptables rules
   args:
     creates: /sys/devices/virtual/net/{{ network.value.name }}
+
+# Enable NAT on upstream network from PIA network via ansible_default_ipv4.interface
+- name: Enable NAT on upsteam network
+  iptables:
+    chain: POSTROUTING
+    table: nat
+    source: "{{network.value.net}}"
+    out_interface: "{{ansible_default_ipv4.interface}}"
+    jump: MASQUERADE
+    comment: "{{network.value.name}}"
+  become: yes
+  notify: Persist iptables rules
+  when:
+    - ansible_system == 'Linux'
+    - network.key == 'public'
 
 - name: Check if system supports resolvectl
   stat:
