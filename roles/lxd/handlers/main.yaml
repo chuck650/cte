@@ -36,5 +36,8 @@
 
 - name: Persist iptables rules
   command: iptables-save --file /etc/iptables/rules.v4
+#  shell:
+#    cmd: iptables-save > /etc/iptables/rules.v4
   become: yes
+  ignore_errors: True
   when: ansible_system == "Linux"
