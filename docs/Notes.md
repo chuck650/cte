@@ -11,7 +11,7 @@ find . -type d -exec chmod 0750 {} \; && find . -type f -exec chmod 0640 {} \;
 Use this command to rsync project files from host to guest for QA testing
 
 ```bash
-rsync -avz ~/ansible/cte/ cte:~/ansible/cte/
+rsync -avzh --exclude '__pycache__' ~/ansible/cte/ cte:~/ansible/cte/
 ```
 
 ## Things to do
