@@ -1,7 +1,38 @@
 ---
 - hosts: localhost
   connection: local
-#  tasks:
+  tasks:
+    - name: Check for /usr/sbin/iptables-save
+      shell:
+        cmd: iptables -V | awk '{print substr($2,2)}'
+      register: iptables_version
+
+    - name: "Set fact: iptables version"
+      set_fact:
+        iptables:
+          version: "{{ iptables_version.stdout.split('.')|list }}"
+
+    - name: show iptables version
+      debug:
+        var: iptables.version
+        verbosity: 1
+
+    - name: Pick a method
+      debug:
+        var: iptables_save_option
+      vars:
+        iptables_save_option: "{{(iptables.version[1]|int <= 6 and iptables.version[2]|int <= 1)|ternary('>','--file')}}"
+
+    - name: Persist iptables rules
+      shell:
+        cmd: "iptables-save {{ option1 }} /etc/iptables/rules.v4"
+      become: yes
+      ignore_errors: True
+      when: ansible_system == "Linux"
+      vars:
+        option1: ">"
+        option2: "--file"
+
 #    - name: Get network gather network facts
 #      setup:
 #        gather_subset:
@@ -61,8 +92,8 @@
 #          - "MAC addr: {{ vars['ansible_' + ansible_default_ipv4.interface].macaddress }}"
 #          - "IPv4: {{ vars['ansible_' + ansible_default_ipv4.interface].ipv4 }}"
 
-  roles:
-   - tpd_multipass
+#  roles:
+#   - tpd_multipass
 
 #  vars:
 #    ovs_vlan: ovs-vlan
