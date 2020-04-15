@@ -1,0 +1,24 @@
+---
+- name: Check for /usr/sbin/iptables-save
+  shell:
+    cmd: iptables -V | awk '{print substr($2,2)}'
+  register: iptables_version
+
+- name: "Set fact: iptables version"
+  set_fact:
+    iptables:
+      version: "{{ iptables_version.stdout.split('.')|list }}"
+
+- name: show iptables version
+  debug:
+    var: iptables.version
+    verbosity: 1
+
+- name: Persist iptables rules
+  shell:
+    cmd: "iptables-save {{ iptables_save_option }} /etc/iptables/rules.v4"
+  become: yes
+  ignore_errors: True
+  when: ansible_system == "Linux"
+  vars:
+    iptables_save_option: "{{(iptables.version[0]|int <= 1 and iptables.version[1]|int <= 6 and iptables.version[2]|int <= 1)|ternary('>','--file')}}"

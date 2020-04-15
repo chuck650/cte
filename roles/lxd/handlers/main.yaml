@@ -35,9 +35,5 @@
 # After creating a new pool, probably need to restart the two snap.lxd services
 
 - name: Persist iptables rules
-  command: iptables-save --file /etc/iptables/rules.v4
-#  shell:
-#    cmd: iptables-save > /etc/iptables/rules.v4
-  become: yes
-  ignore_errors: True
+  include_tasks: handlers/iptables-save.yaml
   when: ansible_system == "Linux"
