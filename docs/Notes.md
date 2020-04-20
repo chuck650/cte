@@ -14,6 +14,18 @@ Use this command to rsync project files from host to guest for QA testing
 rsync -avzh --exclude '__pycache__' ~/ansible/cte/ cte:~/ansible/cte/
 ```
 
+## Strip ansi color sequences from terminal output
+
+An example that gets the ip address of the interface that connects localhost to the first default gateway.  The relevant regex is `s/[[:cntrl:]]\[[0-9]{1,3}m//g`.
+
+```bash
+ip route \
+| awk 'NR==1 && $1=="default"{print "addr show dev " $5}' \
+| sed -r "s/[[:cntrl:]]\[[0-9]{1,3}m//g" \
+| ip -b - \
+| awk '$1=="inet"{print $2}'
+```
+
 ## Things to do
 
 1. Make an lxd inventory plugin for containers
