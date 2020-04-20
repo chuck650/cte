@@ -1,0 +1,34 @@
+---
+- name: Install apt-cacher-ng package on CTE host
+  apt:
+    name: apt-cacher-ng
+    state: latest
+  become: yes
+  when: ansible_facts['os_family'] == "Debian"
+  tags:
+    - cte-common
+    - apt-cacher-ng
+
+- name: Allow apt-cacher-ng https passthrough on CTE host
+  lineinfile:
+    path: /etc/apt-cacher-ng/acng.conf
+    regexp: "PassThroughPattern:"
+    line: "PassThroughPattern: .*"
+  become: yes
+  register: apt_passthrough
+#  notify: Restart apt-cacher-ng
+
+- name: "Restart apt-cacher-ng"
+  systemd:
+    name: apt-cacher-ng
+    state: restarted
+  become: yes
+  when: apt_passthrough.changed
+
+- name: Set apt-cacher-ng as apt http proxy
+  lineinfile:
+    path: /etc/apt/apt.conf.d/00proxy
+    create: yes
+    regexp: "^Acquire::http::Proxy "
+    line: "Acquire::http::Proxy \"http://{{ ansible_default_ipv4.address }}:3142\";"
+  become: yes

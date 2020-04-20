@@ -36,7 +36,11 @@
     - nodejs
     - tmux
     - vim
+    - tree
+    - tshark
+    - mutt
     - iptables-persistent
+    - curl
   become: yes
   when: ansible_facts['os_family'] == "Debian"
   tags:
@@ -77,6 +81,8 @@
   vars:
     user_name: "{{ ansible_user_id }}"
 
-#- name: Enable ipv4 forwarding for this session
-#  command: sysctl -w net.ipv4.ip_forward=1
-#  when: ansible_system == "Linux"
+- name: Configure apt-cacher-ng
+  include_tasks: apt-cacher-ng.yaml
+
+- name: Configure apt-cacher-ng
+  include_tasks: apt-cacher-ng.yaml
