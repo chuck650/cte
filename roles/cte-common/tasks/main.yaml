@@ -1,17 +1,4 @@
 ---
-#- name: Generate user-data.yaml cloud-init vars_file
-#  template:
-#    src: user-data.yaml.j2
-#    dest: "{{ cte_user_dir }}/lxc_user-data.yaml"
-#    mode: 0640
-#  vars:
-#    ssh_keys:
-#      - "{{ lookup('file', user.ssh.pubkeyfiles.rsa) }}"
-#      - "{{ lookup('file', user.ssh.pubkeyfiles.ecdsa) }}"
-#    gecos: "{{ ansible_user_gecos.split(',')[0] }}"
-#  tags:
-#    - cte-common
-#    - cte-cloud-init
 
 - name: Ensure ipv4 forwarding is permanently enabled
   lineinfile:
@@ -84,5 +71,18 @@
 - name: Configure apt-cacher-ng
   include_tasks: apt-cacher-ng.yaml
 
-- name: Configure apt-cacher-ng
-  include_tasks: apt-cacher-ng.yaml
+- name: Enable X11Forwarding in sshd_config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^X11Forwarding "
+    line: "X11Forwarding yes"
+  become: yes
+
+- name: Install Firefox browser
+  apt:
+    name: firefox
+    state: latest
+  become: yes
+  when: ansible_facts['os_family'] == "Debian"
+  tags:
+    - cte-common
