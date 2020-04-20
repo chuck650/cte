@@ -3,6 +3,14 @@
 
 - block:
 
+  - name: Set apt-cacher-ng as apt http proxy
+    lineinfile:
+      path: /etc/apt/apt.conf.d/00proxy
+      create: yes
+      regexp: "^Acquire::http::Proxy "
+      line: "Acquire::http::Proxy \"http://{{ ansible_default_ipv4.address }}:3142\";"
+    become: yes
+
   - name: Install Prerequisites
     apt:
       name: aptitude
