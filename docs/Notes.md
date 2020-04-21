@@ -38,3 +38,16 @@ ip -c addr | sed 's/\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[
 2. Make a libvirt inventory plugin for virtual machines
 3. Make a lxc_network plugin for managing networks in lxd
 4. Make a libvirt plugin for managing libvirt networks
+
+
+## dnsmasq info
+
+Location of each lxc network's dnsmasq file
+
+```bash
+sudo ls -l /var/snap/lxd/common/lxd/networks/cte-netsec
+drwxr-xr-x 2 root root 4096 Apr 17 23:14 dnsmasq.hosts
+-rw-r--r-- 1 root root  222 Apr 21 07:50 dnsmasq.leases
+-rw-r--r-- 1 root root  641 Apr 17 23:14 dnsmasq.pid
+-rw-r--r-- 1 root root    1 Apr 17 23:14 dnsmasq.raw
+```
