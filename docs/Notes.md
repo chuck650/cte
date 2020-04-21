@@ -14,9 +14,9 @@ Use this command to rsync project files from host to guest for QA testing
 rsync -avzh --exclude '__pycache__' ~/ansible/cte/ cte:~/ansible/cte/
 ```
 
-## Strip ansi color sequences from terminal output
+## Strip escape sequences from terminal output
 
-An example that gets the ip address of the interface that connects localhost to the first default gateway.  The relevant regex is `s/[[:cntrl:]]\[[0-9]{1,3}m//g`.
+An example that gets the ip address of the interface that connects localhost to the first default gateway.  The relevant regex to strip ansi color codes is `s/[[:cntrl:]]\[[0-9]{1,3}m//g`.
 
 ```bash
 ip route \
@@ -24,6 +24,12 @@ ip route \
 | sed -r "s/[[:cntrl:]]\[[0-9]{1,3}m//g" \
 | ip -b - \
 | awk '$1=="inet"{print $2}'
+```
+
+To strip all escape sequences and control codes, try this one.
+
+```bash
+ip -c addr | sed 's/\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[][\\@A-Z^_`a-z{|}~]//g'
 ```
 
 ## Things to do
