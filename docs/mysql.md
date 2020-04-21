@@ -49,7 +49,6 @@ mysql> select user, host, account_locked, password_expired from mysql.user order
 | root             | tpd-db1.tpd.cte | N              | N                |
 +------------------+-----------------+----------------+------------------+
 9 rows in set (0.00 sec)
-
 mysql>
 ```
 
