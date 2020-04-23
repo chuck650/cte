@@ -32,6 +32,10 @@ First connect via ssh with X11Forwarding, then run the GUI application.  The GUI
 
 ## Running VM GUI applications without X11 Forwarding
 
+**⮦ ⮦ ⮦ ⮦ ⮦**    *Below section incomplete*    **⮧ ⮧ ⮧ ⮧ ⮧**
+
+---
+
 It is possible that the UID of the user account on the Host and the CTE VM is different.  Make sure to generate or use an `.Xauthority` file for the appropriate user when logged in the each shell.
 
 Determine the location of the `Xauthority` file on the host system.
@@ -60,4 +64,32 @@ user@host:~$ echo ${DISPLAY}
 :1
 user@host:~$ ip -c -br -4 addr show dev mpqemubr0 | awk '{print $3}' | cut -d/ -f1
 10.223.79.1
+```
+
+---
+
+**⮤ ⮤ ⮤ ⮤ ⮤**    *Above section incomplete*    **⮥ ⮥ ⮥ ⮥ ⮥**
+
+
+## Multipass Orchestration
+
+Multipass is an orchestration tool that stores vm instance configuration data in a json file regardless of underlying hypervisor.
+
+- Linux - `/var/snap/multipass/common/data/multipassd/multipassd-vm-instances.json`
+- Windows - `C:\Windows\System32\config\systemprofile\AppData\Roaming\multipassd\multipassd-vm-instances.json`
+- MacOS - `/var/root/Library/Application Support/multipassd/multipassd-vm-instances.json`
+
+There are a couple of environment variables you can set to control default configuration settings for vm creation under multipass.
+
+```bash
+SNAPCRAFT_BUILD_ENVIRONMENT_CPU=4
+SNAPCRAFT_BUILD_ENVIRONMENT_MEMORY=8G
+```
+
+### Multipass on Windows using VirtualBox
+
+You can still get access to the underlying virtualbox manager.
+
+```dos
+C:\> psexec.exe -s -i VirtualBox
 ```
