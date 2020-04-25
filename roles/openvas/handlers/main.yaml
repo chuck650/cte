@@ -1,0 +1,21 @@
+---
+# systemctl restart openvas-scanner
+- name: "Restart openvas-scanner"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: openvas-scanner
+
+# systemctl restart openvas-manager
+- name: "Restart openvas-manager"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: openvas-manager
+
+# systemctl restart greenbone-security-assistant
+- name: "Restart greenbone-security-assistant"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: greenbone-security-assistant

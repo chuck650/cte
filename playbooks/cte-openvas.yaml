@@ -1,0 +1,4 @@
+---
+- hosts: openvas
+  roles:
+   - openvas

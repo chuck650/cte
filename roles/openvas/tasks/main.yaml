@@ -1,0 +1,122 @@
+---
+- name: Install openvas pre-requisites
+  apt:
+    name: "{{ package }}"
+    state: latest
+  become: yes
+  loop:
+    - sqlite3
+    - texlive-latex-extra
+    - texlive-fonts-recommended
+    - net-tools
+    - alien
+    - rpm
+    - nsis
+  loop_control:
+    loop_var: package
+
+- name: Install openvas
+  apt:
+    name: openvas
+    state: latest
+  become: yes
+
+- name: Install openvas pdf support packages
+  apt:
+    name: "{{ package }}"
+    state: latest
+    install_recommends: no
+  become: yes
+  loop:
+    - texlive-latex-extra
+    - texlive-fonts-recommended
+  loop_control:
+    loop_var: package
+
+- name: Install openvas nasl support packages
+  apt:
+    name: "{{ package }}"
+    state: latest
+  become: yes
+  loop:
+    - openvas-nasl
+  loop_control:
+    loop_var: package
+
+- name: Set Greenbone Security Assistant (gsa) service parameters
+  lineinfile:
+    path: /lib/systemd/system/greenbone-security-assistant.service
+    regexp: "^ExecStart=/usr/sbin/gsad"
+    line: ExecStart=/usr/sbin/gsad --foreground --listen=0.0.0.0 --port=9392 --mlisten=0.0.0.0 --mport=9390 --allow-header-host {{ansible_fqdn}} --timeout=1440
+
+- name: Sync network vulnerability tests (nvt)
+  command:
+    cmd: greenbone-nvt-sync
+    creates: /var/lib/openvas/plugins/LICENSE
+  become: yes
+  notify:
+    - "Restart openvas-scanner"
+    - "Restart openvas-manager"
+    - "Restart greenbone-security-assistant"
+
+- name: Sync security content automation protocol (scap) data
+  command:
+    cmd: greenbone-scapdata-sync
+    creates: /var/lib/openvas/scap-data
+  become: yes
+  notify:
+    - "Restart openvas-scanner"
+    - "Restart openvas-manager"
+    - "Restart greenbone-security-assistant"
+
+- name: Sync certificate data
+  command:
+    cmd: greenbone-certdata-sync
+    creates: /var/lib/openvas/cert-data
+  become: yes
+  notify:
+    - "Restart openvas-scanner"
+    - "Restart openvas-manager"
+    - "Restart greenbone-security-assistant"
+
+- name: Get openvas users
+  command:
+    cmd: openvasmd --get-users
+  become: yes
+  changed_when: False
+  register: openvas_users
+
+- block:
+  - name: Create openvas admin user account
+    command:
+      cmd: openvasmd --create-user={{ansible_user_id}} --role=Admin
+
+  - name: Set openvas admin user account password
+    command:
+      cmd: openvasmd --user={{ansible_user_id}} --new-password=password
+
+  become: yes
+  when: ansible_user_id not in openvas_users.stdout
+
+- name: Rebuild nvt cache
+  command:
+    cmd: openvasmd --rebuild
+  become: yes
+
+- name: "Make /usr/bin/openvas-check-setup executable"
+  file:
+    path: /usr/bin/openvas-check-setup
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: "Run openvas-check-setup"
+  command:
+    cmd: openvas-check-setup
+  become: yes
+  register: openvas_check_setup
+  changed_when: False
+  failed_when: "openvas_check_setup.rc != 0 or
+    'installation is OK' not in openvas_check_setup.stdout"
+
+# installation is OK
