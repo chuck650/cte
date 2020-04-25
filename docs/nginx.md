@@ -46,3 +46,42 @@ Accept-Ranges: bytes
 ```
 
 ## Configuring a virtual host
+
+Configure the server.
+
+[nginx documention](https://nginx.org/en/docs/http/configuring_https_servers.html "Configuring ssl/tls")
+
+```
+server {
+    listen              443 ssl;
+    server_name         www.example.com;
+    ssl_certificate     www.example.com.crt;
+    ssl_certificate_key www.example.com.key;
+    ssl_protocols       TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+}
+```
+
+Test the configuration.
+
+```bash
+sudo nginx -t
+```
+
+Reload the configuration.
+
+```bash
+sudo nginx -s reload
+```
+
+Confirm ports are open/listening.
+
+```bash
+sudo ss -plnt4 | awk '$4 ~ /:(80|443)/ {print $4, $6}'
+```
+
+Test the site.
+
+```bash
+openssl s_client -connect netsec-www.netsec.cte:443
+```
