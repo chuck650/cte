@@ -3,6 +3,13 @@
 
 - block:
 
+  # ansible_date_time.tz = "EDT"
+  # ansible_date_time.tz_offset = "-0400"
+  - name: Set timezone to America/New_York
+    timezone:
+      name: America/New_York
+    become: yes
+
   - name: Set apt-cacher-ng as apt http proxy
     lineinfile:
       path: /etc/apt/apt.conf.d/00proxy
