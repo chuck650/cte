@@ -30,3 +30,14 @@ cte:
         nics:
           - parent: *pub
             ipv4: '10.120.113.52/24'
+      - name: pia-openvas
+        course: pia
+        groups: [cte,pia,openvas]
+        nics:
+          - parent: *pub
+            ipv4: '10.120.113.53/24'
+#        packages: []
+#          - sqlite3
+#          - texlive-latex-extra
+#          - texlive-fonts-recommended
+#          - openvas9
