@@ -143,6 +143,7 @@ Content-Type: text/html; charset=utf-8
 < Date: Sun, 26 Apr 2020 12:52:54 GMT
 Date: Sun, 26 Apr 2020 12:52:54 GMT
 ```
+
 Now try using *Firefox* to connect to the forwarded port on the CTE VM from the host.
 
 ![Port Forwarded Firefox](./png/Firefox-Port_Forwarded.png)
@@ -205,8 +206,16 @@ SNAPCRAFT_BUILD_ENVIRONMENT_MEMORY=8G
 
 ### Multipass on Windows using VirtualBox
 
-You can still get access to the underlying virtualbox manager.
+You can still get access to the underlying virtualbox manager.  Here, a Windows `command.exe` terminal window is used to display the vm information for a VM named 'cte'.
 
 ```dos
-C:\> psexec.exe -s -i VirtualBox
+C:\> PsExec64.exe -s -i "c:\program files\oracle\virtualbox\vboxmanage" showvminfo "cte"
 ```
+
+On Windows, multipass will default a new VM to use NAT on a host-only network adapter.  To get access to the VM's interface from the host, which will also allow port forwarding, you must change the VM to use bridged networking instead of host-only networking.  Windows also has no concept of something like `sudo` in Linux. Using a shell started with `Run As Adminstrator` is not a substitute, and still will not allow running VboxManage with System Administrator level privileges.  The tool you need is PsExec64.exe, which is not included in any edition of Windows.  You must download and install PSTools from Microsoft SysInternals.
+
+[PsTools on Windows SysInterals](https://docs.microsoft.com/en-us/sysinternals/downloads/pstools "lets you manage and view processes on remote systems as well as the local one")
+
+Once you have PsTools installed, you can follow this guide to get a bridged networking interface configured on the VM so that you have a visible IP address to the VM from the host.
+
+[Bridged networking in Windows with Multipass and VirtualBox](https://jon.sprig.gs/blog/post/1574 "How to reconfigure Windows 10 VirtualBox VM running under Multipass to use bridged networking and port forwarding")
