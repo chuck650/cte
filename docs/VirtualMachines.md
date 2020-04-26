@@ -30,7 +30,7 @@ First connect via ssh with X11Forwarding, then run the GUI application.  The GUI
 @cte:~$ firefox 2>/dev/null &
 ```
 
-You should see a Firefox application window open on the host machines GUI.  Notice in the screenshot below that the name of the VM appears in the tile bar of the application window to indicate what node the process is running on.
+You should see a Firefox application window open on the host machines GUI.  Notice in the screenshot below that the name of the VM appears in the title bar of the application window to indicate what node (`on cte`) the process is running on.
 
 ![Port Forwarded Firefox](./png/Firefox-X11_Forwarded.png)
 
