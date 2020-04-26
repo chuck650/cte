@@ -30,6 +30,10 @@ First connect via ssh with X11Forwarding, then run the GUI application.  The GUI
 @cte:~$ firefox 2>/dev/null &
 ```
 
+You should see a Firefox application window open on the host machines GUI.  Notice in the screenshot below that the name of the VM appears in the tile bar of the application window to indicate what node the process is running on.
+
+![Port Forwarded Firefox](./png/Firefox-X11_Forwarding.png)
+
 # Port forwarding (DNAT)
 
 A method that works for accessing web applications is to use port forwarding, or DNAT, to forward a port from the VM's interface to the host, over to another host and port accessible from the VM.  This is possible when the traffic from the VM to the host is using SNAT to translate the CTE networks to the network on the host.  You can use `iptables` to place a rule in the `nat` table of the `PREROUTING` chain to change the destination address and port.
@@ -139,6 +143,9 @@ Content-Type: text/html; charset=utf-8
 < Date: Sun, 26 Apr 2020 12:52:54 GMT
 Date: Sun, 26 Apr 2020 12:52:54 GMT
 ```
+Now try using *Firefox* to connect to the forwarded port on the CTE VM from the host.
+
+![Port Forwarded Firefox](./png/Firefox-Port_Forwarding.png)
 
 ## Running VM GUI applications without X11 Forwarding
 
