@@ -23,6 +23,8 @@ You can also check this from the CTE VM.
 X11Forwarding yes
 ```
 
+### X11 forwarding from Linux
+
 First connect via ssh with X11Forwarding, then run the GUI application.  The GUI will open on the host's X11 server.  Redirecting stderr to `/dev/null` keeps the session quiet on the CTE VM and pushing the process to a job releases the CTE terminal for additional input.
 
 ```bash
@@ -33,6 +35,25 @@ First connect via ssh with X11Forwarding, then run the GUI application.  The GUI
 You should see a Firefox application window open on the host machines GUI.  Notice in the screenshot below that the name of the VM appears in the title bar of the application window to indicate what node (`on cte`) the process is running on.
 
 ![Port Forwarded Firefox](./png/Firefox-X11_Forwarded.png)
+
+### X11 Forwarding from MacOS
+
+You'll need an X server running on MacOS.  Apple hasn't run an X Server on MacOS since 10.7, however the XQuartz X server that used to be included in MacOS is still around and kept up to date thanks to the XQuartz project.  The easiest way to install XQuartz is via Homebrew.
+
+[Homebrew Package Manager](https://brew.sh/ "The Missing Package Manager for macOS (or Linux)")
+
+```bash
+$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+$ brew install Caskroom/cask/xquartz
+```
+
+### X11 Forwarding from Windows 10
+
+You'll need an X server for Windows, as well as an ssh client capable of X11 forwarding.
+
+[VcXsrv Windows X Server](https://sourceforge.net/projects/vcxsrv/ "Windows X-server based on the xorg git sources")
+
+[Windows Subsystem for Linux V2](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install "Installation Instructions for WSL 2")
 
 # Port forwarding (DNAT)
 
