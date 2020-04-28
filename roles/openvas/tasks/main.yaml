@@ -48,11 +48,13 @@
     path: /lib/systemd/system/greenbone-security-assistant.service
     regexp: "^ExecStart=/usr/sbin/gsad"
     line: ExecStart=/usr/sbin/gsad --foreground --listen=0.0.0.0 --port=9392 --mlisten=0.0.0.0 --mport=9390 --allow-header-host {{ansible_fqdn}} --timeout=1440
+  become: yes
 
 - name: Sync network vulnerability tests (nvt)
   command:
     cmd: greenbone-nvt-sync
     creates: /var/lib/openvas/plugins/LICENSE
+  register: nvt_sync
   become: yes
   notify:
     - "Restart openvas-scanner"
@@ -98,10 +100,15 @@
   become: yes
   when: ansible_user_id not in openvas_users.stdout
 
+#- name: Check nvt_sync
+#  debug:
+#    var: nvt_sync
+
 - name: Rebuild nvt cache
   command:
     cmd: openvasmd --rebuild
   become: yes
+  when: nvt_sync.changed
 
 - name: "Make /usr/bin/openvas-check-setup executable"
   file:
