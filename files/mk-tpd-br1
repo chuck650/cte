@@ -1,0 +1,267 @@
+#!/bin/bash
+
+dnsmasq="/snap/lxd/current/bin/dnsmasq"
+dhcp_start="51"
+dhcp_end="70"
+cidr="24"
+
+netns="tpd"
+cte_bridge="cte-tpd"
+bridge="${netns}-br1"
+bridge_net="10.220.222.0/24"
+bridge_iface="${bridge}-e0"
+bridge_ipv4="${bridge_net/\.0/\.1}"
+bridge_gw="${bridge_ipv4%%\/*}"
+bridge_cwd="${HOME}/.cte/networks/${bridge}"
+bridge_dhcp_start="${bridge_net%%\.0*}.${dhcp_start}"
+bridge_dhcp_end="${bridge_net%%\.0*}.${dhcp_end}"
+netns_net="10.220.223.0/24"
+netns_ipv4="${netns_net/\.0/\.2}"
+netns_gw="${netns_ipv4%%\/*}"
+dev0="e0"
+dev1="e1"
+veth0="${netns}-${dev0}"
+veth1="${netns}-${dev1}"
+time_now="$(date +%s)"
+lease_expires="$((${time_now} + 21600))"
+
+host_name="tpd-www1"
+host_ipv4_address="${bridge_net/\.0*/\.51}"
+host_eth0_ipv4_address="$(sudo lxc config device get ${host_name} eth0 ipv4.address)"
+host_eth0_parent="$(sudo lxc config device get ${host_name} eth0 parent)"
+host_hwaddr="$(sudo lxc config get ${host_name} volatile.eth0.hwaddr)"
+
+function show_vars() {
+  printf "netns: %s\n" ${netns}
+  printf "bridge: %s\n" ${bridge}
+  printf "bridge_net: %s\n" ${bridge_net}
+  printf "bridge_ipv4: %s\n" ${bridge_ipv4}
+  printf "bridge_gw: %s\n" ${bridge_gw}
+  printf "bridge_iface: %s\n" ${bridge_iface}
+  printf "bridge_dhcp_start: %s\n" ${bridge_dhcp_start}
+  printf "bridge_dhcp_end: %s\n" ${bridge_dhcp_end}
+  #printf "bridge_cwd: %s\n" ${bridge_cwd}
+  printf "netns_net: %s\n" ${netns_net}
+  printf "netns_ipv4: %s\n" ${netns_ipv4}
+  printf "netns_gw: %s\n" ${netns_gw}
+  # printf "dev0: %s\n" ${dev0}
+  # printf "dev1: %s\n" ${dev1}
+  printf "veth0: %s\n" ${veth0}
+  printf "veth1: %s\n" ${veth1}
+  printf "time_now: %s\n" "$(date -d @${time_now})"
+  printf "lease_expires: %s\n" "$(date -d @${lease_expires})"
+  printf "host_name: %s\n" ${host_name}
+  printf "host_ipv4_address: %s\n" ${host_ipv4_address}
+  printf "host_eth0_ipv4_address: %s\n" ${host_eth0_ipv4_address}
+  printf "host_eth0_parent: %s\n" ${host_eth0_parent}
+  printf "host_hwaddr: %s\n" ${host_hwaddr}
+}
+
+if [ "${1}" == "-v" ]; then
+  show_vars
+fi
+
+function clean_ovs_bridges(){
+  # clear all invalid OVS ports
+  if sudo ovs-vsctl show | grep -qP '\(No such device\)'; then
+    sudo ovs-vsctl show | grep -oP '\b[^ ]+\b(?= \(No such device\))' | xargs -n 1 sudo ovs-vsctl --if-exists del-port
+  fi
+}
+
+function reset(){
+  # Switch ${host_name} to ${bridge}
+  user_eth0_parent=$(lxc config get ${host_name} user.eth0_parent)
+  user_eth0_ipv4_address=$(lxc config get ${host_name} user.eth0_ipv4_address)
+  sudo pkill -F ${bridge_cwd}/dnsmasq.pid
+  sudo lxc stop ${host_name}
+  sudo lxc config device set ${host_name} eth0 ipv4.address ${user_eth0_ipv4_address}
+  sudo lxc config device set ${host_name} eth0 parent ${user_eth0_parent}
+  sudo ip netns delete ${netns}
+  sudo ip link delete ${veth0}
+  sudo ovs-vsctl --if-exists del-br ${bridge}
+  sudo lxc start ${host_name}
+  clean_ovs_bridges
+} 2>/dev/null
+
+if [ "${1}" == "-r" ]; then
+  reset
+  exit 0
+fi
+
+function init_config_files(){
+  # Make ~/.cte/networks/ if not exists
+  if ! [ -d "${bridge_cwd}" ]; then
+    echo "Making path: ${bridge_cwd}"
+    mkdir -p "${bridge_cwd}"
+  fi  
+  
+  # Create empty hosts directory for dnsmasq
+  if ! [ -d "${bridge_cwd}/dnsmasq.hosts" ]; then
+    mkdir -p "${bridge_cwd}/dnsmasq.hosts"
+  fi
+  
+  # Create empty leases file for dnsmasq
+  if ! [ -f "${bridge_cwd}/dnsmasq.leases" ]; then
+    touch "${bridge_cwd}/dnsmasq.leases"
+  fi
+  
+  # Create empty raw file for dnsmasq
+  if ! [ -f "${bridge_cwd}/dnsmasq.raw" ]; then
+    touch "${bridge_cwd}/dnsmasq.raw"
+  fi
+
+  # Create host file for dnsmasq
+  if ! [ -f "${bridge_cwd}/dnsmasq.hosts/${host_name}" ]; then
+    echo "${host_hwaddr},${host_ipv4_address},${host_name}" > "${bridge_cwd}/dnsmasq.hosts/${host_name}"
+  fi
+}
+
+init_config_files
+clean_ovs_bridges
+
+# Add the ${bridge} bridge
+sudo ovs-vsctl --may-exist add-br ${bridge}
+
+# Add the netns if missing
+if ! sudo ip netns list | grep -qP "^${netns}\b"; then
+  sudo ip netns add ${netns}
+fi
+
+# Add the veth pair that will link the net namespaces
+if ! ip link show dev ${veth0} > /dev/null 2>&1; then
+  sudo ip link add ${veth0} type veth peer name ${veth1}
+fi
+
+# Set lo up in netns ${netns}
+if ! sudo ip -n ${netns} -o link show lo | grep -q '\bUP\b'; then
+  sudo ip -n ${netns} link set lo up
+fi
+
+# Add internal interface ${bridge_iface} to ${bridge} for netns ${netns}
+if ! sudo ovs-vsctl list-ports ${bridge} | grep -q "\b${bridge_iface}\b"; then
+  sudo ovs-vsctl add-port ${bridge} ${bridge_iface} -- set Interface ${bridge_iface} type=internal
+fi
+
+# Push dev ${bridge_iface} to netns ${netns}
+if ip -o link show dev ${bridge_iface} > /dev/null 2>&1; then
+  sudo ip link set ${bridge_iface} netns ${netns}
+fi
+
+# Push dev ${veth1} to netns ${netns}
+if ip -o link show dev ${veth1} > /dev/null 2>&1; then
+  sudo ip link set ${veth1} netns ${netns}
+fi
+
+# Set ip addr on dev ${bridge_iface} in netns ${netns}
+if sudo ip -n ${netns} -o link show dev ${bridge_iface} > /dev/null 2>&1; then
+  if ! sudo ip -n ${netns} addr show dev ${bridge_iface} | grep -q "\b${bridge_ipv4}\b"; then
+    sudo ip -n ${netns} addr add ${bridge_ipv4} dev ${bridge_iface}
+  fi
+fi
+
+# Set ip addr on dev ${veth1} in netns ${netns}
+if sudo ip -n ${netns} -o link show dev ${veth1} >/dev/null 2>&1; then
+  if ! sudo ip -n ${netns} addr show dev ${veth1} | grep -q "\b${netns_ipv4}\b"; then
+    sudo ip -n ${netns} addr add ${netns_ipv4} dev ${veth1}
+  fi
+fi
+
+# Set dev ${bridge_iface} up in netns ${netns}
+if ! sudo ip -n ${netns} -o link show dev ${bridge_iface} | grep -q '\bUP\b'; then
+  sudo ip -n ${netns} link set dev ${bridge_iface} up
+fi
+
+# Set dev ${veth1} up in netns ${netns}
+if ! sudo ip -n ${netns} -o link show dev ${veth1} | grep -q '\bUP\b'; then
+  sudo ip -n ${netns} link set dev ${veth1} up
+fi
+
+# Set dev ${veth0} up
+if ! ip -o link show dev ${veth0} | grep -q '\bUP\b'; then
+  sudo ip link set dev ${veth0} up
+fi
+
+# Push dev ${veth0} to ovs bridge cte-tpd
+if ! sudo ovs-vsctl list-ports ${cte_bridge} | grep -q "\b${veth0}\b"; then
+  sudo ovs-vsctl add-port ${cte_bridge} ${veth0}
+fi
+
+# Add route to netns ${netns}
+if ! ip route | grep -q "^${bridge_net}\b"; then
+  sudo ip route add ${bridge_net} via ${netns_gw}
+fi
+
+# Run dnsmasq on ${netns} without controlling tty
+if ! pgrep -F ${bridge_cwd}/dnsmasq.pid 2>&1 >/dev/null; then
+  sudo ip netns exec tpd \
+  setsid \
+  /snap/lxd/current/bin/dnsmasq \
+  --keep-in-foreground \
+  --strict-order \
+  --bind-interfaces \
+  --except-interface=lo \
+  --no-ping \
+  --interface=${bridge_iface} \
+  --quiet-dhcp \
+  --quiet-dhcp6 \
+  --quiet-ra \
+  --listen-address=${bridge_gw} \
+  --dhcp-no-override \
+  --dhcp-authoritative \
+  --dhcp-leasefile=${bridge_cwd}/dnsmasq.leases \
+  --dhcp-hostsfile=${bridge_cwd}/dnsmasq.hosts \
+  --pid-file=${bridge_cwd}/dnsmasq.pid \
+  --dhcp-option=3,${bridge_gw} \
+  --dhcp-range ${bridge_dhcp_start},${bridge_dhcp_end},1h \
+  -s tpd.cte \
+  -S /tpd.cte/ \
+  --conf-file=${bridge_cwd}/dnsmasq.raw \
+  -u lxd \
+  </dev/null &>/dev/null &
+fi
+
+# Store ${host_name} eth0.parent
+user_eth0_parent=$(lxc config get ${host_name} user.eth0_parent)
+if [ "${user_eth0_parent}" == "" ]; then
+  lxc config set tpd-www1 user.eth0_parent ${host_eth0_parent}
+fi
+
+# Store ${host_name} eth0.ipv4_address
+user_eth0_ipv4_address=$(lxc config get ${host_name} user.eth0_ipv4_address)
+if [ "${user_eth0_ipv4_address}" == "" ]; then
+  lxc config set tpd-www1 user.eth0_ipv4_address ${host_eth0_ipv4_addressi}
+fi
+
+# Switch ${host_name} to ${bridge}
+if [ "${host_eth0_ipv4_address}" != "${host_ipv4_address}" ] || [ "${host_eth0_paren}" != "${bridge}" ]; then
+  lxc stop ${host_name} 2>/dev/null
+  lxc config device set ${host_name} eth0 ipv4.address ${host_ipv4_address}
+  lxc config device set ${host_name} eth0 parent ${bridge}
+  lxc start ${host_name}
+fi
+
+clean_ovs_bridges
+
+# Show local ipv4 addresses
+printf "\n\e[38;5;85;4mLocal ipv4 addresses:\e[0m\n\n"
+ip -c -br -4 addr
+
+# Show netns ipv4 addresses
+printf "\n\e[38;5;85;4mNamespace ipv4 addresses in %s:\e[0m\n\n" ${netns}
+sudo ip -n ${netns} -c -br -4 addr
+
+# Show the local routing table with new route highlighted
+printf "\n\e[38;5;85;4mLocal routing table:\e[0m\n\n"
+ip route | grep --color=always -e '^' -e "^${bridge_net}\b.*"
+
+# Show the netns routing table
+printf "\n\e[38;5;85;4m%s routing table:\e[0m\n\n" ${netns}
+sudo ip -n ${netns} route
+
+# Validate connection to ${netns}
+printf "\n\e[38;5;85;4mVerify connection to %s bridge\e[0m\n\n" ${bridge}
+ping -c 1 -w 30 ${netns_ipv4%%\/*}
+
+# Validate connection to ${bridge}
+printf "\n\e[38;5;85;4mVerify connection to %s namespace\e[0m\n\n" ${netns}
+ping -c 1 -w 10 ${bridge_ipv4%%\/*}
