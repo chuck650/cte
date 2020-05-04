@@ -93,18 +93,18 @@ function init_config_files(){
   if ! [ -d "${bridge_cwd}" ]; then
     echo "Making path: ${bridge_cwd}"
     mkdir -p "${bridge_cwd}"
-  fi  
-  
+  fi
+
   # Create empty hosts directory for dnsmasq
   if ! [ -d "${bridge_cwd}/dnsmasq.hosts" ]; then
     mkdir -p "${bridge_cwd}/dnsmasq.hosts"
   fi
-  
+
   # Create empty leases file for dnsmasq
   if ! [ -f "${bridge_cwd}/dnsmasq.leases" ]; then
     touch "${bridge_cwd}/dnsmasq.leases"
   fi
-  
+
   # Create empty raw file for dnsmasq
   if ! [ -f "${bridge_cwd}/dnsmasq.raw" ]; then
     touch "${bridge_cwd}/dnsmasq.raw"
@@ -229,7 +229,7 @@ fi
 # Store ${host_name} eth0.ipv4_address
 user_eth0_ipv4_address=$(lxc config get ${host_name} user.eth0_ipv4_address)
 if [ "${user_eth0_ipv4_address}" == "" ]; then
-  lxc config set tpd-www1 user.eth0_ipv4_address ${host_eth0_ipv4_addressi}
+  lxc config set tpd-www1 user.eth0_ipv4_address ${host_eth0_ipv4_address}
 fi
 
 # Switch ${host_name} to ${bridge}
