@@ -16,7 +16,7 @@
 
 - name: "Initialize LXD: Run initialization"
   shell:
-    cmd: cat /tmp/preseed.yaml | sudo lxd init --preseed
+    cmd: cat /tmp/preseed.yaml | lxd init --preseed
   become: yes
   when: ansible_system == "Linux"
 
