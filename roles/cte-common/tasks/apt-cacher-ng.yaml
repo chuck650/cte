@@ -16,7 +16,9 @@
     line: "PassThroughPattern: .*"
   become: yes
   register: apt_passthrough
-#  notify: Restart apt-cacher-ng
+  tags:
+    - cte-common
+    - apt-cacher-ng
 
 - name: "Restart apt-cacher-ng"
   systemd:
@@ -24,6 +26,9 @@
     state: restarted
   become: yes
   when: apt_passthrough.changed
+  tags:
+    - cte-common
+    - apt-cacher-ng
 
 - name: Set apt-cacher-ng as apt http proxy
   lineinfile:
@@ -32,3 +37,6 @@
     regexp: "^Acquire::http::Proxy "
     line: "Acquire::http::Proxy \"http://{{ ansible_default_ipv4.address }}:3142\";"
   become: yes
+  tags:
+    - cte-common
+    - apt-cacher-ng
