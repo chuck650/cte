@@ -17,9 +17,9 @@
       regexp: "^Acquire::http::Proxy "
       line: "Acquire::http::Proxy \"http://{{ ansible_default_ipv4.address }}:3142\";"
     become: yes
-  tags:
-    - cte-common
-    - apt-cacher-ng
+    tags:
+      - cte-common
+      - apt-cacher-ng
 
   - name: Install Prerequisites
     apt:
